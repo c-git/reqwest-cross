@@ -2,6 +2,8 @@
 name = "reqwest-cross"
 version = "0.1.0"
 edition = "2021"
+categories = ["network-programming", "wasm", "web-programming"]
+keywords = ["http", "wasm", "native", "web"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
