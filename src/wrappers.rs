@@ -11,7 +11,7 @@ use reqwest::{Error, RequestBuilder, Response};
 ///# use reqwest_cross::fetch;
 ///
 ///# #[cfg(not(target_arch = "wasm32"))] // TODO 2: Also needs to be behind the tokio feature flag
-///# #[tokio::main]
+///# #[tokio::main(flavor = "current_thread")]
 ///# async fn main() {
 ///  let request = Client::new().get("http://httpbin.org/get");
 ///  let (tx, rx) = oneshot::channel();
