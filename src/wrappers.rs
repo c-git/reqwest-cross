@@ -16,9 +16,8 @@ pub fn fetch(
 
 #[cfg(test)]
 mod tests {
-    use std::sync::{Arc, Mutex};
-
     use reqwest::Client;
+    use std::sync::mpsc::channel;
 
     use super::*;
 
@@ -26,21 +25,14 @@ mod tests {
     #[tokio::test]
     async fn native_get() {
         let request = Client::new().get("http://httpbin.org/get");
-        let response: Arc<Mutex<Option<Result<Response, Error>>>> = Arc::new(Mutex::new(None));
-        let closure_copy = Arc::clone(&response);
+        let (tx, rx) = channel();
         fetch(request, move |result: Result<Response, Error>| {
-            let mut value = closure_copy.lock().unwrap();
-            *value = Some(result);
+            tx.send(result).unwrap();
         });
         let status = loop {
             tokio::time::sleep(std::time::Duration::from_millis(100)).await;
-            let option = response.lock().expect("Get mutex value");
-            if let Some(result) = option.as_ref() {
-                let status = result
-                    .as_ref()
-                    .expect("Expecting Response not Error")
-                    .status();
-                break status;
+            if let Ok(val) = rx.try_recv() {
+                break val.unwrap().status();
             }
         };
 
