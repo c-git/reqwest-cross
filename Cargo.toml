@@ -9,8 +9,9 @@ keywords = ["http", "wasm", "native", "web"]
 
 [dependencies]
 reqwest = { version = "0.11.16", default-features = false }
+tokio = { version = "1.27.0", default-features = false, features = ["full"] }
+# TODO 2: Stop pulling in all tokio features and put it behind a feature flag
 
-# TODO 3: Look into using features to control how much of reqwest is pulled in
 # For compiling to web:
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 js-sys = "0.3.61"

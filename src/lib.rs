@@ -19,3 +19,16 @@
 //! [discussion](https://github.com/emilk/egui/discussions/521), which had other suggested examples as well.
 //!
 //! [reqwest-url]: https://docs.rs/reqwest/latest/reqwest/
+
+// TODO 3: Add an example to the documentation
+
+#[cfg(not(target_arch = "wasm32"))]
+mod native;
+#[cfg(target_arch = "wasm32")]
+mod wasm; // TODO 2: Implement version for web
+mod wrappers;
+
+#[cfg(target_arch = "wasm32")]
+pub use web::{fetch_async, spawn_future};
+
+pub use wrappers::fetch;
