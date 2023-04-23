@@ -46,4 +46,9 @@ mod tests {
 
         assert_eq!(status, 200);
     }
+
+    // TODO 3: Add tests for post
+    // TODO 3: Add tests for patch
+    // TODO 3: Add tests for delete
+    // TODO 3: Add tests for put
 }
