@@ -39,7 +39,7 @@ pub fn fetch(
     crate::native::fetch(request, Box::new(on_done));
 
     #[cfg(target_arch = "wasm32")]
-    crate::web::fetch(request, Box::new(on_done));
+    crate::wasm::fetch(request, Box::new(on_done));
 }
 
 #[cfg(test)]

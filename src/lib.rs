@@ -29,6 +29,6 @@ mod wasm; // TODO 2: Implement version for web
 mod wrappers;
 
 #[cfg(target_arch = "wasm32")]
-pub use web::{fetch_async, spawn_future};
+pub use wasm::{fetch_async, spawn_future};
 
 pub use wrappers::fetch;
