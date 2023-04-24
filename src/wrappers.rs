@@ -2,7 +2,7 @@
 
 use reqwest::{Error, RequestBuilder, Response};
 
-/// Performs a HTTP requests and calls the given callback when done.
+/// Performs a HTTP requests and calls the given callback when done. NB: Needs to use a callback to prevent blocking on the thread that initiates the fetch.
 ///
 /// # Tokio example
 /// ```rust

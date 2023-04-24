@@ -5,7 +5,8 @@
 
 //! # reqwest-cross
 //!
-//! The `reqwest-cross` crate provides a wrapper around [reqwest][reqwest-url] for ease of use in applications that target BOTH native and wasm.
+//! The `reqwest-cross` crate provides a wrapper around [reqwest][reqwest-url] for ease of use in applications that target BOTH native and wasm
+//! and do not want to block in the calling task/thread, for example in a UI task/thread.
 //! This crate is inspired by [ehttp](https://docs.rs/ehttp/0.2.0/ehttp/) but uses [reqwest][reqwest-url] instead.
 //!
 //! The currently selected approach of exposing and using [reqwest::RequestBuilder] is much more flexible and generally desirable
