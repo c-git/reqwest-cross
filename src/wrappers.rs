@@ -13,18 +13,18 @@ use reqwest::{Error, RequestBuilder, Response};
 ///
 ///# #[cfg(all(not(target_arch = "wasm32"),feature = "native-tokio"))]
 ///# #[tokio::main(flavor = "current_thread")]
-///# async fn main() {
+///# async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ///  let request = Client::new().get("http://httpbin.org/get");
 ///  let (tx, rx) = oneshot::channel();
 ///
 ///  fetch(request, move |result: Result<Response, Error>| {
-///      tx.send(result.expect("Expecting Response not Error").status()).unwrap();
+///      tx.send(result.expect("Expecting Response not Error").status())
+///                .expect("Receiver should still be available");
 ///  });
 ///
-///  let status = rx
-///      .await
-///      .unwrap();
+///  let status = rx.await?; //In actual use case code to prevent blocking use try_recv instead
 ///  assert_eq!(status, 200);
+///# Ok(())
 ///# }
 ///
 ///# #[cfg(target_arch = "wasm32")]
