@@ -1,9 +1,16 @@
 [package]
 name = "reqwest-cross"
 version = "0.1.0"
+description = "Wrapper around reqwest for use in both native and wasm"
+keywords = ["http", "wasm", "native", "web", "reqwest", "request", "client"]
+repository = "https://github.com/c-git/reqwest-cross"
+documentation = "https://docs.rs/reqwest-cross"
+categories = ["web-programming::http-client", "wasm"]
+authors = ["One <one.bgz1@gmailcom"]
+readme = "README.md"
+license-file = "LICENSE"
 edition = "2021"
-categories = ["network-programming", "wasm", "web-programming"]
-keywords = ["http", "wasm", "native", "web"]
+rust-version = "1.57.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
