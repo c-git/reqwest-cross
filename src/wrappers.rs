@@ -8,7 +8,7 @@ use reqwest::{Error, RequestBuilder, Response};
 /// # Tokio example
 /// ```rust
 ///# use reqwest::{Client, Error, Response};
-///# use tokio::sync::oneshot;
+///# use futures::channel::oneshot;
 ///# use reqwest_cross::fetch;
 ///
 ///# #[cfg(all(not(target_arch = "wasm32"),feature = "native-tokio"))]
