@@ -20,6 +20,7 @@ wasm-bindgen-futures = "0.4.34"
 
 [dev-dependencies]
 tokio = { version = "1.27.0", default-features = false, features = ["macros"] }
+wasm-bindgen-test = "0.3.34"
 
 [features]
 native-tokio = ["dep:tokio"]
