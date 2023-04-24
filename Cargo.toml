@@ -31,4 +31,5 @@ tokio = { version = "1.27.0", default-features = false, features = ["macros"] }
 wasm-bindgen-test = "0.3.34"
 
 [features]
+default = ["native-tokio"]
 native-tokio = ["dep:tokio"]
