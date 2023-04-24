@@ -2,7 +2,7 @@
 name = "reqwest-cross"
 version = "0.2.0"
 description = "Wrapper around reqwest for use in both native and wasm"
-keywords = ["http", "wasm", "native", "web", "reqwest", "request", "client"]
+keywords = ["http", "wasm", "native", "web", "request"]
 repository = "https://github.com/c-git/reqwest-cross"
 documentation = "https://docs.rs/reqwest-cross"
 categories = ["web-programming::http-client", "wasm"]
