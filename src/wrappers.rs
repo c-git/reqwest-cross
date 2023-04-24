@@ -17,14 +17,12 @@ use reqwest::{Error, RequestBuilder, Response};
 ///  let (tx, rx) = oneshot::channel();
 ///
 ///  fetch(request, move |result: Result<Response, Error>| {
-///      tx.send(result).unwrap();
+///      tx.send(result.expect("Expecting Response not Error").status()).unwrap();
 ///  });
 ///
 ///  let status = rx
 ///      .await
-///      .unwrap()
-///      .expect("Expecting a response not an error")
-///      .status();
+///      .unwrap();
 ///  assert_eq!(status, 200);
 ///# }
 ///
