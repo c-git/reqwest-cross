@@ -3,6 +3,7 @@
 use reqwest::{Error, RequestBuilder, Response};
 
 /// Performs a HTTP requests and calls the given callback when done. NB: Needs to use a callback to prevent blocking on the thread that initiates the fetch.
+/// Note: Instead of calling get like in the example you can use post, put, etc. (See [reqwest::Client]).
 ///
 /// # Tokio example
 /// ```rust
@@ -38,13 +39,4 @@ pub fn fetch(
 
     #[cfg(target_arch = "wasm32")]
     crate::wasm::fetch(request, Box::new(on_done));
-}
-
-#[cfg(test)]
-mod tests {
-
-    // TODO 3: Add tests for post (create as examples instead of tests)
-    // TODO 3: Add tests for patch
-    // TODO 3: Add tests for delete
-    // TODO 3: Add tests for put
 }
