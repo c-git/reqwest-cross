@@ -20,10 +20,11 @@
 //!
 //! # Feature Flags
 //!
-//! Exactly 1 of the "native-*" flags MUST be enabled to select which runtime to use for native.
+//! Exactly 1 of the "native-*" flags MUST be enabled to select which runtime to use for native. If one of the other options needs to be used instead of tokio
+//! then defaults must be disabled. For example: `reqwest-cross = { version = "*", default-features = false, features = ["native-async-std"] }`
+//! (The feature in this example does not exist at this time, only used for demonstration purposes).
 //!
-//! - **native-tokio**: Sets [tokio][tokio-url] as the runtime to use for native. NOTE: Right now this feature is REQUIRED as no other
-//! options are provided for native right now. (But not set as default to not break semver if one is added later)
+//! - **native-tokio**: Sets [tokio][tokio-url] as the runtime to use for native. (Default)
 //!
 //! # Tradeoffs
 //!
