@@ -5,6 +5,6 @@
     ],
     "rust-analyzer.cargo.features": "all",
     // "code-runner.customCommand": "cargo test --features native-tokio",
-    "code-runner.customCommand": "cargo test --target wasm32-unknown-unknown",
+    "code-runner.customCommand": "wasm-pack test --headless --firefox",
     "rust-analyzer.cargo.target": "wasm32-unknown-unknown", //Uncomment to use rust-analyzer on wasm code instead
 }
