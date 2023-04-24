@@ -4,8 +4,8 @@
         "jsvalue"
     ],
     "rust-analyzer.cargo.features": "all",
-    // "code-runner.customCommand": "cargo test --features native-tokio",
+    "code-runner.customCommand": "cargo test --features native-tokio",
     // "code-runner.customCommand": "wasm-pack test --headless --firefox",
-    "code-runner.customCommand": "cargo doc --open --no-deps --document-private-items --features native-tokio",
+    // "code-runner.customCommand": "cargo doc --open --no-deps --document-private-items --features native-tokio",
     "rust-analyzer.cargo.target": "wasm32-unknown-unknown", //Uncomment to use rust-analyzer on wasm code instead
 }

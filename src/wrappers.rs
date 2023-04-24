@@ -10,7 +10,7 @@ use reqwest::{Error, RequestBuilder, Response};
 ///# use tokio::sync::oneshot;
 ///# use reqwest_cross::fetch;
 ///
-///# #[cfg(not(target_arch = "wasm32"))] // TODO 2: Also needs to be behind the tokio feature flag
+///# #[cfg(all(not(target_arch = "wasm32"),feature = "native-tokio"))]
 ///# #[tokio::main(flavor = "current_thread")]
 ///# async fn main() {
 ///  let request = Client::new().get("http://httpbin.org/get");
@@ -26,7 +26,7 @@ use reqwest::{Error, RequestBuilder, Response};
 ///  assert_eq!(status, 200);
 ///# }
 ///
-///# #[cfg(target_arch = "wasm32")] // TODO 2: Also needs to be behind the tokio feature flag
+///# #[cfg(target_arch = "wasm32")]
 ///# fn main(){}
 /// ```
 pub fn fetch(
