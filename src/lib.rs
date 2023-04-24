@@ -25,10 +25,7 @@
 #[cfg(not(target_arch = "wasm32"))]
 mod native;
 #[cfg(target_arch = "wasm32")]
-mod wasm; // TODO 2: Implement version for web
+mod wasm;
 mod wrappers;
-
-#[cfg(target_arch = "wasm32")]
-pub use wasm::{fetch_async, spawn_future};
 
 pub use wrappers::fetch;
