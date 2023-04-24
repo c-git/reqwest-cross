@@ -8,7 +8,6 @@ pub(crate) fn fetch(
     request: reqwest::RequestBuilder,
     on_done: impl 'static + Send + FnOnce(Result<reqwest::Response, reqwest::Error>),
 ) {
-    // TODO 2: Handle case where feature is not tokio
     tokio::spawn(async move {
         let result = request.send().await;
         on_done(result)
