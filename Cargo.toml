@@ -8,7 +8,7 @@ documentation = "https://docs.rs/reqwest-cross"
 categories = ["web-programming::http-client", "wasm"]
 authors = ["One <one.bgz1@gmailcom"]
 readme = "README.md"
-license-file = "LICENSE"
+license = "MIT"
 edition = "2021"
 rust-version = "1.57.0"
 
