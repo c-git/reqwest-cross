@@ -52,3 +52,5 @@ mod wasm;
 mod wrappers;
 
 pub use wrappers::fetch;
+
+// TODO 4: Enable CI to run tests on merge to main
