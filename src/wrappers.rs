@@ -40,3 +40,5 @@ pub fn fetch(
     #[cfg(target_arch = "wasm32")]
     crate::wasm::fetch(request, Box::new(on_done));
 }
+
+// TODO 2: Add method to make a call in a blocking fashion (useful for testing)
