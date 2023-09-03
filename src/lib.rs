@@ -8,7 +8,7 @@
 //! The `reqwest-cross` crate (inspired by [ehttp][ehttp-url]) provides a wrapper around [reqwest][reqwest-url] for ease of use in applications that target
 //! BOTH native and wasm and do not want to block in the calling task/thread, for example in a UI task/thread. This is achieved by using callbacks and
 //! while not ideal a better solution hasn't been found yet. NOTE: At least 1 [feature flag](#feature-flags) MUST be set to choose which runtime to use for
-//! native. To communicate between the callback and the caller you can use various approaches such as channels (used in [examples](#examples)), Arc<Mutex<_>>, promises
+//! native. To communicate between the callback and the caller you can use various approaches such as channels (used in [examples](#examples)), `Arc<Mutex<_>>`, promises
 //! and so on. [egui](https://docs.rs/egui/latest/egui/) has an example of how to handle the callback (using promises and their repaint request to wake the UI)
 //! [here](https://github.com/emilk/egui/tree/master/examples/download_image). Their example uses [ehttp][ehttp-url] instead of `reqwest-cross` but the
 //! callback handling can be done the same way. Only real difference in client code is a [reqwest::Client], which requires a runtime, is passed instead of a
