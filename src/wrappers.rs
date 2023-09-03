@@ -1,19 +1,22 @@
-//! Stores the wrapper functions that can be called from either native or wasm code
+//! Stores the wrapper functions that can be called from either native or wasm
+//! code
 
 use reqwest::{Error, RequestBuilder, Response};
 
-/// Performs a HTTP requests and calls the given callback when done. NB: Needs to use a callback to prevent blocking on the thread that initiates the fetch.
-/// Note: Instead of calling get like in the example you can use post, put, etc. (See [reqwest::Client]).
+/// Performs a HTTP requests and calls the given callback when done. NB: Needs
+/// to use a callback to prevent blocking on the thread that initiates the
+/// fetch. Note: Instead of calling get like in the example you can use post,
+/// put, etc. (See [reqwest::Client]).
 ///
 /// # Tokio example
 /// ```rust
-///# use reqwest::{Client, Error, Response};
-///# use futures::channel::oneshot;
-///# use reqwest_cross::fetch;
+/// # use reqwest::{Client, Error, Response};
+/// # use futures::channel::oneshot;
+/// # use reqwest_cross::fetch;
 ///
-///# #[cfg(all(not(target_arch = "wasm32"),feature = "native-tokio"))]
-///# #[tokio::main(flavor = "current_thread")]
-///# async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// # #[cfg(all(not(target_arch = "wasm32"),feature = "native-tokio"))]
+/// # #[tokio::main(flavor = "current_thread")]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ///  let request = Client::new().get("http://httpbin.org/get");
 ///  let (tx, rx) = oneshot::channel();
 ///
@@ -24,11 +27,11 @@ use reqwest::{Error, RequestBuilder, Response};
 ///
 ///  let status = rx.await?; //In actual use case code to prevent blocking use try_recv instead
 ///  assert_eq!(status, 200);
-///# Ok(())
-///# }
+/// # Ok(())
+/// # }
 ///
-///# #[cfg(target_arch = "wasm32")]
-///# fn main(){}
+/// # #[cfg(target_arch = "wasm32")]
+/// # fn main(){}
 /// ```
 pub fn fetch(
     request: RequestBuilder,
