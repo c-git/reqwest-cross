@@ -1,6 +1,6 @@
 [package]
 name = "reqwest-cross"
-version = "0.2.2"
+version = "0.2.3"
 description = "Wrapper around reqwest for use in both native and wasm"
 keywords = ["http", "wasm", "native", "web", "request"]
 repository = "https://github.com/c-git/reqwest-cross"
