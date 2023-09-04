@@ -1,7 +1,7 @@
 name: Security audit
 on:
   schedule:
-    - cron: '32 22 18 * *'
+    - cron: '00 10 * * 3' # 06:00 GMT-4
   push:
     paths:
       - '**/Cargo.toml'
@@ -10,7 +10,7 @@ jobs:
   security_audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: taiki-e/install-action@cargo-deny
+      - uses: wykies/checkout@v3
+      - uses: wykies/install-action@cargo-deny
       - name: Scan for vulnerabilities
         run: cargo deny check advisories
