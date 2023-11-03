@@ -1,6 +1,7 @@
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
+#![forbid(unsafe_code)]
 #![cfg_attr(test, deny(warnings))]
 
 //! # reqwest-cross
