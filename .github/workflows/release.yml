@@ -15,7 +15,7 @@ jobs:
     name: ReleaseCompile
     runs-on: ubuntu-latest
     steps:
-      - uses: wykies/checkout@v3
+      - uses: wykies/checkout@main
       - uses: wykies/setup-rust-toolchain@v1
       - name: Run Release Compile
         run: cargo check --all-features --release

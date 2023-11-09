@@ -10,7 +10,7 @@ jobs:
   security_audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: wykies/checkout@v3
+      - uses: wykies/checkout@main
       - uses: wykies/install-action@cargo-deny
       - name: Scan for vulnerabilities
         run: cargo deny check advisories
