@@ -1,0 +1,21 @@
+name: Check Semver
+
+on:
+  push: 
+    branches:
+      - main
+  pull_request: 
+    branches:
+      - main
+env:
+  CARGO_TERM_COLOR: always
+
+  
+jobs:
+  semver-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Check semver
+        uses: obi1kenobi/cargo-semver-checks-action@v2
