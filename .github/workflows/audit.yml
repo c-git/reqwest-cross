@@ -1,4 +1,9 @@
 name: Security audit
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   schedule:
     - cron: '00 10 * * 3' # 06:00 GMT-4
