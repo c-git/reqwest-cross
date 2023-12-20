@@ -20,6 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: wykies/checkout@main
-      - uses: wykies/setup-rust-toolchain@v1
+      - uses: wykies/setup-rust-toolchain@main
       - name: Run Release Compile
         run: cargo check --all-features --release
