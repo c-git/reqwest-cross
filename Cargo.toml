@@ -1,12 +1,12 @@
 [package]
 name = "reqwest-cross"
-version = "0.2.3"
+version = "0.2.4"
 description = "Wrapper around reqwest for use in both native and wasm"
 keywords = ["http", "wasm", "native", "web", "request"]
 repository = "https://github.com/c-git/reqwest-cross"
 documentation = "https://docs.rs/reqwest-cross"
 categories = ["web-programming::http-client", "wasm"]
-authors = ["One <one.bgz1@gmailcom"]
+authors = ["One <one.bgz1@gmail.com>"]
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 edition = "2021"
