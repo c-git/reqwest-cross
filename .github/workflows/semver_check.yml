@@ -19,7 +19,7 @@ jobs:
   semver-checks:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout@main
-        uses: wykies/checkout
+      - name: checkout
+        uses: wykies/checkout@main
       - name: Check semver
         uses: obi1kenobi/cargo-semver-checks-action@main
