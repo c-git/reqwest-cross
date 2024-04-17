@@ -1,4 +1,9 @@
 name: Security audit
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   schedule:
     - cron: '00 10 * * 3' # 06:00 GMT-4
@@ -10,7 +15,7 @@ jobs:
   security_audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: wykies/checkout@v3
-      - uses: wykies/install-action@cargo-deny
+      - uses: wykies/checkout@main
+      - uses: taiki-e/install-action@cargo-deny
       - name: Scan for vulnerabilities
         run: cargo deny check advisories
