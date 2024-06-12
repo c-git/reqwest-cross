@@ -76,4 +76,4 @@ pub use wrappers::fetch;
 
 // TODO 3: Reexport the client so including reqwest directly is not necessary
 
-// TODO 4: Enable CI to run tests on merge to main
+// TODO 2: Enable CI to run tests on merge to main

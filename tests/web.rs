@@ -16,7 +16,7 @@ fn main() {
                 .expect("Receiver should still be available");
         });
 
-        let status = rx.await?; //In actual use case code to prevent blocking use try_recv instead
+        let status = rx.await?; //If we can't block the calling task use try_recv instead
         assert_eq!(status, 200);
         Ok(())
     }
