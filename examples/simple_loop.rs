@@ -29,6 +29,8 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
     let mut state = State::Startup;
 
+    println!("Starting loop");
+
     // This loop would normally be a game loop, or the executor of an immediate mode GUI.
     loop {
         match state {
@@ -71,5 +73,15 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
                 return Ok(());
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_name() {
+        common_code().await.unwrap();
     }
 }
