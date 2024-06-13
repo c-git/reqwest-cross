@@ -74,5 +74,6 @@ pub use wrappers::fetch;
 #[cfg(feature = "yield_now")]
 pub use yield_::yield_now;
 
-// TODO 3: Reexport the client so including reqwest directly is not necessary
+pub use reqwest::Client; // Exported to make it easier to reuse and maintain semver
+
 // TODO 3: Check output of docs
