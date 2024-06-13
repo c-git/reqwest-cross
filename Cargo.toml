@@ -26,8 +26,15 @@ wasm-bindgen-futures = "0.4.34"
 
 [dev-dependencies]
 futures = "0.3.28"
-tokio = { version = "1.27.0", default-features = false, features = ["macros"] }
+reqwest = { version = "0.12.3" }
+tokio = { version = "1.27.0", default-features = false, features = ["macros", "rt-multi-thread"] }
 wasm-bindgen-test = "0.3.34"
+
+# Uncomment below to include example in tests (already covered by doc-test plus dedicated test)
+# [[example]]
+# name = "simple_fetch"
+# harness = false
+# test = true
 
 [features]
 default = ["native-tokio"]
