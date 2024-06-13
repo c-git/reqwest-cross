@@ -29,6 +29,8 @@ jobs:
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - name: Run tests
         run: wasm-pack test --headless --chrome
+      - name: Run Examples
+        run: wasm-pack test --headless --chrome --all-features --examples
 
   clippy:
     name: Clippy WASM
