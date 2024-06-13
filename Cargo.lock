@@ -681,10 +681,12 @@ name = "reqwest-cross"
 version = "0.3.0"
 dependencies = [
  "futures",
+ "js-sys",
  "reqwest",
  "tokio",
  "wasm-bindgen-futures",
  "wasm-bindgen-test",
+ "web-sys",
 ]
 
 [[package]]

@@ -31,7 +31,7 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
         },
     );
 
-    // Note the next call block this execution path (task / thread) see loop example for alternative
+    // Note the next call block this execution path (task / thread) see loop examples for alternatives
     let status = rx.await?;
     assert_eq!(status, 200);
     Ok(())
