@@ -1,4 +1,4 @@
-name: Rust
+name: Rust WASM
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -29,7 +29,7 @@ jobs:
         run: wasm-pack test --headless --chrome
 
   clippy:
-    name: Clippy
+    name: Clippy WASM
     runs-on: ubuntu-latest
     steps:
       - uses: wykies/checkout@main
