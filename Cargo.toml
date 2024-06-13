@@ -32,3 +32,4 @@ wasm-bindgen-test = "0.3.34"
 [features]
 default = ["native-tokio"]
 native-tokio = ["dep:tokio"]
+# If we add support for other runtimes we need to update CI to test each separately (rn tests all features together)

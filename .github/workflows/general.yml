@@ -8,6 +8,10 @@ on:
   push:
     branches:
       - develop
+  pull_request: 
+    branches:
+      - main
+      - develop
       
 env:
   CARGO_TERM_COLOR: always
