@@ -67,10 +67,12 @@ mod native;
 #[cfg(target_arch = "wasm32")]
 mod wasm;
 mod wrappers;
+#[cfg(feature = "yield_now")]
+mod yield_;
 
 pub use wrappers::fetch;
+#[cfg(feature = "yield_now")]
+pub use yield_::yield_now;
 
 // TODO 3: Reexport the client so including reqwest directly is not necessary
-
-// TODO 2: Create examples in the examples folder and reference them from the
-//          docs instead of point ppl at the tests
+// TODO 3: Check output of docs

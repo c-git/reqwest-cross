@@ -23,6 +23,8 @@ tokio = { version = "1", default-features = false, optional = true }
 # For compiling to wasm:
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen-futures = "0.4.34"
+js-sys = { version = "0.3.69", optional = true }
+web-sys = { version = "0.3.69", optional = true }
 
 [dev-dependencies]
 futures = "0.3.28"
@@ -32,16 +34,12 @@ wasm-bindgen-test = "0.3.34"
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 tokio = { version = "1.27.0", default-features = false, features = ["macros", "rt-multi-thread"] }
 
-[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
-js-sys = "0.3.69"
-web-sys = "0.3.69"
-# Uncomment below to include example in tests (already covered by doc-test plus dedicated test)
-# [[example]]
-# name = "simple_fetch"
-# harness = false
-# test = true
+[[example]]
+name = "loop_yield"
+required-features = ["yield_now"]
 
 [features]
 default = ["native-tokio"]
 native-tokio = ["dep:tokio"]
+yield_now = ["dep:js-sys", "web-sys"]
 # If we add support for other runtimes we need to update CI to test each separately (rn tests all features together)
