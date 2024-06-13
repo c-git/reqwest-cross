@@ -1,8 +1,6 @@
 //! Stores the wrapper functions that can be called from either native or wasm
 //! code
 
-use reqwest::{Error, RequestBuilder, Response};
-
 /// Performs a HTTP requests and calls the given callback when done. NB: Needs
 /// to use a callback to prevent blocking on the thread that initiates the
 /// fetch. Note: Instead of calling get like in the example you can use post,
@@ -34,17 +32,15 @@ use reqwest::{Error, RequestBuilder, Response};
 /// # #[cfg(target_arch = "wasm32")]
 /// # fn main(){}
 /// ```
-pub fn fetch(
-    request: RequestBuilder,
-    on_done: impl 'static + Send + FnOnce(Result<Response, Error>),
-) {
+pub fn fetch<F>(request: reqwest::RequestBuilder, on_done: F)
+where
+    F: 'static + Send + FnOnce(reqwest::Result<reqwest::Response>),
+{
     #[cfg(not(target_arch = "wasm32"))]
-    crate::native::fetch(request, Box::new(on_done));
+    crate::native::fetch(request, on_done);
 
     #[cfg(target_arch = "wasm32")]
-    crate::wasm::fetch(request, Box::new(on_done));
+    crate::wasm::fetch(request, on_done);
 }
-
-//  TODO 3: Change to generics for `on_done`
 
 // TODO 3: Test link in documentation after pushing to main
