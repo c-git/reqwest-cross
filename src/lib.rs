@@ -72,5 +72,5 @@ pub use wrappers::fetch;
 
 // TODO 3: Reexport the client so including reqwest directly is not necessary
 
-// TODO 3: Create examples in the examples folder and reference them from the
+// TODO 2: Create examples in the examples folder and reference them from the
 //          docs instead of point ppl at the tests

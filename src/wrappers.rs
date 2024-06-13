@@ -3,7 +3,7 @@
 
 use reqwest::{Error, RequestBuilder, Response};
 
-// TODO 2: Use qualified code instead of imports
+// TODO 1: Use qualified code instead of imports
 /// Performs a HTTP requests and calls the given callback when done. NB: Needs
 /// to use a callback to prevent blocking on the thread that initiates the
 /// fetch. Note: Instead of calling get like in the example you can use post,
@@ -45,6 +45,4 @@ pub fn fetch(
     crate::wasm::fetch(request, Box::new(on_done));
 }
 
-// TODO 2: Add method to make a call in a blocking fashion (useful for testing)
-
-//  TODO 2: Change to generics for `on_done`
+//  TODO 3: Change to generics for `on_done`
