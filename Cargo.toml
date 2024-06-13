@@ -1,6 +1,6 @@
 [package]
 name = "reqwest-cross"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["One <one.bgz1@gmail.com>"]
 categories = ["web-programming::http-client", "wasm"]
 documentation = "https://docs.rs/reqwest-cross"
