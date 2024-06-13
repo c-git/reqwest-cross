@@ -23,6 +23,8 @@ jobs:
     steps:
       - uses: wykies/checkout@main
       - uses: wykies/setup-rust-toolchain@main
+        with:
+          target: wasm32-unknown-unknown
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - name: Run tests
@@ -35,6 +37,7 @@ jobs:
       - uses: wykies/checkout@main
       - uses: wykies/setup-rust-toolchain@main
         with:
+          target: wasm32-unknown-unknown
           components: clippy
       - name: Linting
         run: cargo clippy --target="wasm32-unknown-unknown" -- -D warnings
