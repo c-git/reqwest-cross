@@ -18,7 +18,7 @@ env:
 
 jobs:
   test:
-    name: Test WASM
+    name: Test WASM in browser
     runs-on: ubuntu-latest
     steps:
       - uses: wykies/checkout@main
