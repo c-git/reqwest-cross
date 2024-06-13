@@ -1,7 +1,4 @@
 // Native and WASM require different main functions but after that it should be the same
-//
-// I haven't tried running this code in wasm as in my use case I use egui and don't deal with the WASM directly
-// but see example here https://github.com/seanmonstar/reqwest/tree/master/examples/wasm_github_fetch if you want to run wasm directly
 
 use reqwest_cross::fetch;
 
@@ -12,9 +9,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[cfg(target_arch = "wasm32")]
-#[wasm_bindgen]
+wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
+#[cfg(target_arch = "wasm32")]
 fn main() {
-    common_code().await.unwrap();
+    #[wasm_bindgen_test::wasm_bindgen_test]
+    async fn do_fetch() -> Result<(), Box<dyn std::error::Error>> {
+        common_code().await
+    }
 }
 
 async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
@@ -25,13 +26,13 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
     fetch(
         request,
         move |result: Result<reqwest::Response, reqwest::Error>| {
-            tx.send(result.expect("Expecting Response not Error"))
+            tx.send(result.expect("Expecting Response not Error").status())
                 .expect("Receiver should still be available");
         },
     );
 
     // Note the next call block this execution path (task / thread) see loop example for alternative
-    let status = rx.await?.status();
+    let status = rx.await?;
     assert_eq!(status, 200);
     Ok(())
 }

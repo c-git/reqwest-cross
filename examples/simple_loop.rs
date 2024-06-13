@@ -1,3 +1,6 @@
+// Native and WASM require different main functions but after that it should be the same
+// Couldn't get the oneshot channel working with try_recv for wasm, seem to be blocking infinity
+
 use reqwest_cross::fetch;
 
 #[cfg(all(not(target_arch = "wasm32"), feature = "native-tokio"))]
@@ -7,14 +10,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[cfg(target_arch = "wasm32")]
-#[wasm_bindgen]
+wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
+#[cfg(target_arch = "wasm32")]
 fn main() {
-    common_code().await.unwrap();
+    #[wasm_bindgen_test::wasm_bindgen_test]
+    async fn do_fetch() -> Result<(), Box<dyn std::error::Error>> {
+        common_code().await
+    }
 }
 
 enum State {
     Startup,
-    AwaitingResponse(futures::channel::oneshot::Receiver<reqwest::Response>),
+    AwaitingResponse(futures::channel::oneshot::Receiver<reqwest::StatusCode>),
     Done,
 }
 
@@ -24,7 +31,7 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
 
     // This loop would normally be a game loop, or the executor of an immediate mode GUI.
     loop {
-        match &mut state {
+        match state {
             State::Startup => {
                 // Send request
                 let request = client.get("http://httpbin.org/get");
@@ -32,25 +39,24 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
                 fetch(
                     request,
                     move |result: Result<reqwest::Response, reqwest::Error>| {
-                        // You can also return the result instead of using expect but made the example more complicated to read
-                        tx.send(result.expect("Expecting Response not Error"))
+                        tx.send(result.expect("Expecting Response not Error").status())
                             .expect("Receiver should still be available");
                     },
                 );
                 println!("Request sent");
                 state = State::AwaitingResponse(rx);
             }
-            State::AwaitingResponse(rx) => {
+            State::AwaitingResponse(mut rx) => {
                 // Check if response is ready
                 match rx.try_recv() {
                     Ok(option) => {
-                        if let Some(response) = option {
-                            let status = response.status();
+                        if let Some(status) = option {
                             println!("Response received");
                             assert_eq!(status, 200);
                             state = State::Done;
                         } else {
                             // Still waiting
+                            state = State::AwaitingResponse(rx);
                         }
                     }
                     Err(e) => {
