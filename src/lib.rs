@@ -9,24 +9,20 @@
 //! The `reqwest-cross` crate (inspired by [ehttp][ehttp-url]) provides a
 //! wrapper around [reqwest][reqwest-url] for ease of use in applications that
 //! target BOTH native and wasm and do not want to block in the calling
-//! task/thread, for example in a UI task/thread. This is achieved by using
-//! callbacks and while not ideal a better solution hasn't been found yet. NOTE:
-//! At least 1 [feature flag](#feature-flags) MUST be set to choose which
-//! runtime to use for native. To communicate between the callback and the
-//! caller you can use various approaches such as channels (used in
-//! [examples](#examples)), `Arc<Mutex<_>>`, promises and so on.
-//! [egui](https://docs.rs/egui/latest/egui/) has an example of how to handle
-//! the callback (using promises and their repaint request to wake the UI)
-//! [here](https://github.com/emilk/egui/tree/master/examples/download_image).
-//! Their example uses [ehttp][ehttp-url] instead of `reqwest-cross` but the
-//! callback handling can be done the same way. Only real difference in client
-//! code is a [reqwest::Client], which requires a runtime, is passed instead of
-//! a [ehttp::Request](https://docs.rs/ehttp/latest/ehttp/struct.Request.html).
+//! task/thread, for example in a UI task/thread or game loop. This is achieved
+//! by using callbacks. NOTE: At least 1 [feature flag](#feature-flags) for
+//! native MUST be set to choose which runtime to use. Currently only Tokio is
+//! supported but if you want to use another runtime please open an issue on
+//! github and we'd be happy to add it. To communicate between the callback and
+//! the caller you can use various approaches such as:
+//!
+//! - channels  (used in [examples](#examples))
+//! - `Arc<Mutex<_>>`
+//! - promises and so on.
 //!
 //! # Examples
 //!
-//! For examples of how to use this crate see [fetch] and the
-//! [tests](https://github.com/c-git/reqwest-cross/tree/main/tests).
+//! For examples of how to use this crate see [fetch]
 //!
 //! # Feature Flags
 //!
@@ -71,9 +67,12 @@ mod native;
 #[cfg(target_arch = "wasm32")]
 mod wasm;
 mod wrappers;
+#[cfg(feature = "yield_now")]
+mod yield_;
 
 pub use wrappers::fetch;
 
-// TODO 3: Reexport the client so including reqwest directly is not necessary
+#[cfg(feature = "yield_now")]
+pub use yield_::yield_now;
 
-// TODO 4: Enable CI to run tests on merge to main
+pub use reqwest::Client; // Exported to make it easier to use without a second import and maintain semver

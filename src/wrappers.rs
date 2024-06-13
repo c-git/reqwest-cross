@@ -1,26 +1,25 @@
 //! Stores the wrapper functions that can be called from either native or wasm
 //! code
 
-use reqwest::{Error, RequestBuilder, Response};
-
 /// Performs a HTTP requests and calls the given callback when done. NB: Needs
 /// to use a callback to prevent blocking on the thread that initiates the
 /// fetch. Note: Instead of calling get like in the example you can use post,
-/// put, etc. (See [reqwest::Client]).
+/// put, etc. (See [reqwest::Client]). Also see the examples
+/// [folder](https://github.com/c-git/reqwest-cross/tree/main/examples)
+/// for more complete examples.
 ///
 /// # Tokio example
 /// ```rust
-/// # use reqwest::{Client, Error, Response};
-/// # use futures::channel::oneshot;
 /// # use reqwest_cross::fetch;
 ///
 /// # #[cfg(all(not(target_arch = "wasm32"),feature = "native-tokio"))]
 /// # #[tokio::main(flavor = "current_thread")]
 /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
-///  let request = Client::new().get("http://httpbin.org/get");
-///  let (tx, rx) = oneshot::channel();
+///  let client = reqwest::Client::new();
+///  let request = client.get("http://httpbin.org/get");
+///  let (tx, rx) = futures::channel::oneshot::channel();
 ///
-///  fetch(request, move |result: Result<Response, Error>| {
+///  fetch(request, move |result: Result<reqwest::Response, reqwest::Error>| {
 ///      tx.send(result.expect("Expecting Response not Error").status())
 ///                .expect("Receiver should still be available");
 ///  });
@@ -33,15 +32,15 @@ use reqwest::{Error, RequestBuilder, Response};
 /// # #[cfg(target_arch = "wasm32")]
 /// # fn main(){}
 /// ```
-pub fn fetch(
-    request: RequestBuilder,
-    on_done: impl 'static + Send + FnOnce(Result<Response, Error>),
-) {
+pub fn fetch<F>(request: reqwest::RequestBuilder, on_done: F)
+where
+    F: 'static + Send + FnOnce(reqwest::Result<reqwest::Response>),
+{
     #[cfg(not(target_arch = "wasm32"))]
-    crate::native::fetch(request, Box::new(on_done));
+    crate::native::fetch(request, on_done);
 
     #[cfg(target_arch = "wasm32")]
-    crate::wasm::fetch(request, Box::new(on_done));
+    crate::wasm::fetch(request, on_done);
 }
 
-// TODO 2: Add method to make a call in a blocking fashion (useful for testing)
+// TODO 3: Test link in documentation after pushing to main

@@ -1,4 +1,4 @@
-name: Rust
+name: Rust WASM
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,32 +18,28 @@ env:
 
 jobs:
   test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: wykies/checkout@main
-      - uses: wykies/setup-rust-toolchain@main
-      - name: Run tests
-        run: cargo test --all-features
-
-  fmt:
-    name: Rustfmt
+    name: Test WASM in browser
     runs-on: ubuntu-latest
     steps:
       - uses: wykies/checkout@main
       - uses: wykies/setup-rust-toolchain@main
         with:
-          components: rustfmt
-      - name: Enforce formatting
-        run: cargo fmt --check
+          target: wasm32-unknown-unknown
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - name: Run tests
+        run: wasm-pack test --headless --chrome
+      - name: Run Examples
+        run: wasm-pack test --headless --chrome --all-features --examples
 
   clippy:
-    name: Clippy
+    name: Clippy WASM
     runs-on: ubuntu-latest
     steps:
       - uses: wykies/checkout@main
       - uses: wykies/setup-rust-toolchain@main
         with:
+          target: wasm32-unknown-unknown
           components: clippy
       - name: Linting
-        run: cargo clippy -- -D warnings
+        run: cargo clippy --target="wasm32-unknown-unknown" -- -D warnings
