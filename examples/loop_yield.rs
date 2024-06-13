@@ -1,5 +1,6 @@
-// Native and WASM require different main functions but after that it should be the same
-// Uses yield but yield isn't available yet for wasm_bindgen_futures so uses a workaround found (poll-promise might be better)
+// Native and WASM require different main functions but after that it should be
+// the same Uses yield but yield isn't available yet for wasm_bindgen_futures so
+// uses a workaround found (poll-promise might be better)
 
 use reqwest_cross::fetch;
 
@@ -31,7 +32,8 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Starting loop");
 
-    // This loop would normally be a game loop, or the executor of an immediate mode GUI.
+    // This loop would normally be a game loop, or the executor of an immediate mode
+    // GUI.
     loop {
         match state {
             State::Startup => {

@@ -1,4 +1,5 @@
-// Native and WASM require different main functions but after that it should be the same
+// Native and WASM require different main functions but after that it should be
+// the same
 
 use reqwest_cross::fetch;
 
@@ -31,7 +32,8 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
         },
     );
 
-    // Note the next call block this execution path (task / thread) see loop examples for alternatives
+    // Note the next call block this execution path (task / thread) see loop
+    // examples for alternatives
     let status = rx.await?;
     assert_eq!(status, 200);
     Ok(())
