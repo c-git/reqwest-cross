@@ -76,5 +76,3 @@ pub use wrappers::fetch;
 pub use yield_::yield_now;
 
 pub use reqwest::Client; // Exported to make it easier to use without a second import and maintain semver
-
-// TODO 3: Check output of docs
