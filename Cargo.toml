@@ -14,6 +14,7 @@ description = "Wrapper around reqwest for use in both native and wasm"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+futures = "0.3.28"
 reqwest = { version = "0.12.3", default-features = false }
 
 # For native compilation
@@ -27,7 +28,6 @@ js-sys = { version = "0.3.69", optional = true }
 web-sys = { version = "0.3.69", optional = true }
 
 [dev-dependencies]
-futures = "0.3.28"
 reqwest = { version = "0.12.3" }
 wasm-bindgen-test = "0.3.34"
 

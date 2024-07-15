@@ -43,4 +43,14 @@ where
     crate::wasm::fetch(request, on_done);
 }
 
+/// Provides a cross platform compatible way to run an async function in a blocking fashion.
+/// Intended for use in callbacks as this will block but call backs are not async so we need sync code
+pub fn block_on<F>(future: F) -> F::Output
+where
+    F: std::future::Future + Send + 'static,
+    F::Output: Send + 'static,
+{
+    futures::executor::block_on(future)
+}
+
 // TODO 3: Test link in documentation after pushing to main
