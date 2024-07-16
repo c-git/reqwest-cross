@@ -1,6 +1,8 @@
 //! Stores the wrapper functions that can be called from either native or wasm
 //! code
 
+use std::fmt::Debug;
+
 use futures::Future;
 
 /// Performs a HTTP requests and calls the given callback when done. NB: Needs
@@ -57,10 +59,33 @@ where
     crate::wasm::spawn(future);
 }
 
-/// Provides a cross platform compatible way to run an async function in a blocking fashion.
-/// Intended for use in callbacks as this will block but call backs are not async so we need sync code
-pub fn block_on<F: Future>(future: F) -> F::Output {
-    futures::executor::block_on(future)
+/// Sometimes needed in callbacks to call async code from the sync context
+/// Provides a cross platform compatible way to run an async function in a
+/// blocking fashion, but without actually blocking because then the function
+/// cannot complete and results in a deadlock.
+///
+/// # Warning
+/// Until a better solution can be found this will result in a busy loop so use
+/// sparingly.
+pub fn wait_for<F>(future: F) -> F::Output
+where
+    F: Future + Send + 'static,
+    F::Output: Debug + Send,
+{
+    let (tx, mut rx) = futures::channel::oneshot::channel();
+    spawn(async move {
+        tx.send(future.await)
+            .expect("failed to send but expected rx to still be available");
+    });
+    loop {
+        // TODO 4: Is there a better way to do this than a busy loop?
+        if let Some(x) = rx
+            .try_recv()
+            .expect("failed to receive. maybe sender panicked")
+        {
+            return x;
+        }
+    }
 }
 
 // TODO 3: Test link in documentation after pushing to main
