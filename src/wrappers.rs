@@ -38,11 +38,23 @@ pub fn fetch<F>(request: reqwest::RequestBuilder, on_done: F)
 where
     F: 'static + Send + FnOnce(reqwest::Result<reqwest::Response>),
 {
+    let future = async move {
+        let result = request.send().await;
+        on_done(result)
+    };
+    spawn(future);
+}
+
+/// Spawns a future on the underlying runtime in a cross platform way
+pub fn spawn<F>(future: F)
+where
+    F: futures::Future<Output = ()> + 'static + Send,
+{
     #[cfg(not(target_arch = "wasm32"))]
-    crate::native::fetch(request, on_done);
+    crate::native::spawn(future);
 
     #[cfg(target_arch = "wasm32")]
-    crate::wasm::fetch(request, on_done);
+    crate::wasm::spawn(future);
 }
 
 /// Provides a cross platform compatible way to run an async function in a blocking fashion.
