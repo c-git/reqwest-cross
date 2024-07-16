@@ -42,7 +42,7 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
                 let (tx, rx) = futures::channel::oneshot::channel();
                 fetch(
                     request,
-                    move |result: Result<reqwest::Response, reqwest::Error>| {
+                    move |result: Result<reqwest::Response, reqwest::Error>| async {
                         tx.send(result.expect("Expecting Response not Error").status())
                             .expect("Receiver should still be available");
                     },

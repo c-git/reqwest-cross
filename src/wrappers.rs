@@ -1,6 +1,7 @@
 //! Stores the wrapper functions that can be called from either native or wasm
 //! code
 
+#[cfg(not(target_arch = "wasm32"))]
 /// Performs a HTTP requests and calls the given callback when done. NB: Needs
 /// to use a callback to prevent blocking on the thread that initiates the
 /// fetch. Note: Instead of calling get like in the example you can use post,
@@ -19,7 +20,7 @@
 ///  let request = client.get("http://httpbin.org/get");
 ///  let (tx, rx) = futures::channel::oneshot::channel();
 ///
-///  fetch(request, move |result: Result<reqwest::Response, reqwest::Error>| {
+///  fetch(request, move |result: Result<reqwest::Response, reqwest::Error>| async {
 ///      tx.send(result.expect("Expecting Response not Error").status())
 ///                .expect("Receiver should still be available");
 ///  });
@@ -32,13 +33,28 @@
 /// # #[cfg(target_arch = "wasm32")]
 /// # fn main(){}
 /// ```
-pub fn fetch<F>(request: reqwest::RequestBuilder, on_done: F)
+pub fn fetch<F, O>(request: reqwest::RequestBuilder, on_done: F)
 where
-    F: 'static + Send + FnOnce(reqwest::Result<reqwest::Response>),
+    F: 'static + Send + FnOnce(reqwest::Result<reqwest::Response>) -> O,
+    O: futures::Future<Output = ()> + Send,
 {
     let future = async move {
         let result = request.send().await;
-        on_done(result)
+        on_done(result).await;
+    };
+    spawn(future);
+}
+
+/// dox
+#[cfg(target_arch = "wasm32")]
+pub fn fetch<F, O>(request: reqwest::RequestBuilder, on_done: F)
+where
+    F: 'static + FnOnce(reqwest::Result<reqwest::Response>) -> O,
+    O: futures::Future<Output = ()>,
+{
+    let future = async move {
+        let result = request.send().await;
+        on_done(result).await;
     };
     spawn(future);
 }
