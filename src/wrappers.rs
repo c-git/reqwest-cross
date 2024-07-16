@@ -1,8 +1,6 @@
 //! Stores the wrapper functions that can be called from either native or wasm
 //! code
 
-use std::fmt::Debug;
-
 use futures::Future;
 
 /// Performs a HTTP requests and calls the given callback when done. NB: Needs
@@ -47,15 +45,21 @@ where
     spawn(future);
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 /// Spawns a future on the underlying runtime in a cross platform way
 pub fn spawn<F>(future: F)
 where
     F: futures::Future<Output = ()> + 'static + Send,
 {
-    #[cfg(not(target_arch = "wasm32"))]
     crate::native::spawn(future);
+}
 
-    #[cfg(target_arch = "wasm32")]
+#[cfg(target_arch = "wasm32")]
+/// dox
+pub fn spawn<F>(future: F)
+where
+    F: futures::Future<Output = ()> + 'static,
+{
     crate::wasm::spawn(future);
 }
 
@@ -67,16 +71,35 @@ where
 /// # Warning
 /// Until a better solution can be found this will result in a busy loop so use
 /// sparingly.
+#[cfg(not(target_arch = "wasm32"))]
 pub fn wait_for<F>(future: F) -> F::Output
 where
-    F: Future + Send + 'static,
-    F::Output: Debug + Send,
+    F: Future + 'static + Send,
+    F::Output: Send,
 {
-    let (tx, mut rx) = futures::channel::oneshot::channel();
+    let (tx, rx) = futures::channel::oneshot::channel();
     spawn(async move {
         tx.send(future.await)
-            .expect("failed to send but expected rx to still be available");
+            .unwrap_or_else(|_| eprintln!("failed to send but expected rx to still be available"));
     });
+    wait_for_receiver(rx)
+}
+
+#[cfg(target_arch = "wasm32")]
+/// dox
+pub fn wait_for<F>(future: F) -> F::Output
+where
+    F: Future + 'static,
+{
+    let (tx, rx) = futures::channel::oneshot::channel();
+    spawn(async move {
+        tx.send(future.await)
+            .unwrap_or_else(|_| eprintln!("failed to send but expected rx to still be available"));
+    });
+    wait_for_receiver(rx)
+}
+
+fn wait_for_receiver<T>(mut rx: futures::channel::oneshot::Receiver<T>) -> T {
     loop {
         // TODO 4: Is there a better way to do this than a busy loop?
         if let Some(x) = rx
