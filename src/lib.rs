@@ -76,6 +76,4 @@ pub use wrappers::fetch;
 #[cfg(feature = "yield_now")]
 pub use yield_::yield_now;
 
-pub use wrappers::wait_for;
-
 pub use reqwest::Client; // Exported to make it easier to use without a second import and maintain semver
