@@ -1,11 +1,8 @@
 //! Stores the code specific to wasm compilations
 
-pub fn fetch<F>(request: reqwest::RequestBuilder, on_done: F)
+pub fn spawn<F>(future: F)
 where
-    F: 'static + Send + FnOnce(reqwest::Result<reqwest::Response>),
+    F: futures::Future<Output = ()> + 'static,
 {
-    wasm_bindgen_futures::spawn_local(async move {
-        let result = request.send().await;
-        on_done(result)
-    });
+    wasm_bindgen_futures::spawn_local(future);
 }

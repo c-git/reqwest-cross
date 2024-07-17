@@ -3,6 +3,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![forbid(unsafe_code)]
 #![cfg_attr(test, deny(warnings))]
+// dox - used as documentation for duplicate wasm functions (Uncertain if this will cause problems but seen this in Reqwest)
 
 //! # reqwest-cross
 //!
