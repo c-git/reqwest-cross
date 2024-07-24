@@ -76,5 +76,3 @@ where
 {
     crate::wasm::spawn(future);
 }
-
-// TODO 3: Test link in documentation after pushing to main
