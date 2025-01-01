@@ -3,7 +3,8 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![forbid(unsafe_code)]
 #![cfg_attr(test, deny(warnings))]
-// dox - used as documentation for duplicate wasm functions (Uncertain if this will cause problems but seen this in Reqwest)
+// dox - used as documentation for duplicate wasm functions (Uncertain if this will cause problems
+// but seen this in Reqwest)
 
 //! # reqwest-cross
 //!
@@ -36,6 +37,11 @@
 //!
 //! - **native-tokio**: Sets [tokio][tokio-url] as the runtime to use for
 //!   native. (Default)
+//! - **yield_now**: Add a function that can be called to yield to the executor.
+//!   This is only needed if you only have one thread and need to release it to
+//!   prevent a deadlock because you are waiting on another future (as can be
+//!   the case in WASM).
+//!
 //!
 //! # Tradeoffs
 //!
