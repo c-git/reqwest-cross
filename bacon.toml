@@ -1,0 +1,10 @@
+default_job = "run_example" # Made default to remember to run it
+
+# This one is more important it tests for deadlock
+[jobs.run_example]
+command = ["cargo", "run", "--features=yield_now", "--example", "loop_yield"]
+need_stdout = true
+allow_warnings = true
+
+[keybindings]
+e = "job:run_example"
