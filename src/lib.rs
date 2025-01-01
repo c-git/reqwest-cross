@@ -35,8 +35,11 @@
 //! (The feature in this example does not exist at this time, only used for
 //! demonstration purposes).
 //!
+//! - **default**: Enables the tokio runtime and reqwest's default features. If
+//!   disabled do enable requests default features again (or at least tls).
 //! - **native-tokio**: Sets [tokio][tokio-url] as the runtime to use for
 //!   native. (Default)
+//! - reqwest_default: Enables reqwest's default features
 //! - **yield_now**: Add a function that can be called to yield to the executor.
 //!   This is only needed if you only have one thread and need to release it to
 //!   prevent a deadlock because you are waiting on another future (as can be

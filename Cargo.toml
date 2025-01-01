@@ -38,7 +38,8 @@ name = "loop_yield"
 required-features = ["yield_now"]
 
 [features]
-default = ["native-tokio"]
+default = ["native-tokio", "reqwest_default"]
+reqwest_default = ["reqwest/default"]
 native-tokio = ["dep:tokio"]
 yield_now = ["dep:js-sys", "dep:web-sys"]
 # If we add support for other runtimes we need to update CI to test each separately (rn tests all features together)
