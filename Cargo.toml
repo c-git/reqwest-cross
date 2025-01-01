@@ -41,5 +41,5 @@ required-features = ["yield_now"]
 [features]
 default = ["native-tokio"]
 native-tokio = ["dep:tokio"]
-yield_now = ["dep:js-sys", "web-sys"]
+yield_now = ["dep:js-sys", "dep:web-sys"]
 # If we add support for other runtimes we need to update CI to test each separately (rn tests all features together)
