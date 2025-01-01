@@ -45,6 +45,29 @@
 //!   prevent a deadlock because you are waiting on another future (as can be
 //!   the case in WASM).
 //!
+//! A subset of reqwest features have corresponding feature flags on this create
+//! to enable them. If you need on that we didn't include please open an issue
+//! and let us know and we'll add it. In the mean while you can depend on
+//! reqwest directly with the same version as this crate and enable the feature.
+//! Because features are additive it will be enabled but note that if the
+//! version goes out of sync you're going to have a bad time with being unable
+//! to compile.
+//!
+//! - default-tls
+//! - native-tls
+//! - rustls-tls
+//! - http2
+//! - json
+//! - cookies
+//! - hickory-dns
+//! - multipart
+//! - socks
+//! - stream
+//! - brotli
+//! - deflate
+//! - gzip
+//! - zstd
+//!
 //!
 //! # Tradeoffs
 //!
