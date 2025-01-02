@@ -95,6 +95,8 @@
 //! [ehttp-url]: https://docs.rs/ehttp/0.2.0/ehttp/
 //! [tokio-url]: https://docs.rs/tokio/latest/tokio/
 
+// TODO 1: test using `document_features` for documenting features
+
 #[cfg(not(target_arch = "wasm32"))]
 mod native;
 #[cfg(target_arch = "wasm32")]
