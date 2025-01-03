@@ -35,14 +35,14 @@
 //!
 //! # Tradeoffs
 //!
-//! # Exposing underlying framework that actually sends the requests
+//! ## Exposing underlying framework that actually sends the requests
 //!  The currently selected approach of exposing and using
-//! [reqwest::RequestBuilder] is much more flexible than the fully isolated
+//! [reqwest::RequestBuilder](https://docs.rs/reqwest/latest/reqwest/struct.RequestBuilder.html) is much more flexible than the fully isolated
 //! approach used by [ehttp][ehttp-url] and is generally desirable as it allows
-//! for reuse of the same [reqwest::Client] as recommended by
-//! [reqwest][reqwest-url].However, since [reqwest::Client] is asynchronous it
-//! requires an available runtime. For wasm the spawning of the futures is
-//! handled by [wasm-bindgen-futures](https://docs.rs/wasm-bindgen-futures/latest/wasm_bindgen_futures/)
+//! for reuse of the same [reqwest::Client][reqwest_client] as recommended by
+//! [reqwest][reqwest-url]. However, since [reqwest::Client][reqwest_client] is
+//! asynchronous it requires an available runtime. For wasm the spawning of the
+//! futures is handled by [wasm-bindgen-futures](https://docs.rs/wasm-bindgen-futures/latest/wasm_bindgen_futures/)
 //! but for local which runtime is specified using [feature
 //! flags](#feature-flags).
 //!
@@ -57,6 +57,7 @@
 //! [reqwest-url]: https://docs.rs/reqwest/latest/reqwest/
 //! [ehttp-url]: https://docs.rs/ehttp/0.2.0/ehttp/
 //! [tokio-url]: https://docs.rs/tokio/latest/tokio/
+//! [reqwest_client]:https://docs.rs/reqwest/latest/reqwest/struct.Client.html
 
 // TODO 2: Add using awaiting date to list of ways to poll
 
