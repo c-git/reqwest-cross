@@ -30,10 +30,7 @@
 //!
 //! Exactly 1 of the "native-*" flags MUST be enabled to select which runtime to
 //! use for native. If one of the other options needs to be used instead of
-//! tokio then defaults must be disabled. For example: `reqwest-cross = {
-//! version = "*", default-features = false, features = ["native-async-std"] }`
-//! (The feature in this example does not exist at this time, only used for
-//! demonstration purposes).
+//! tokio then defaults must be disabled.
 //!
 //! - **default**: Enables the tokio runtime and reqwest's default features. If
 //!   disabled do enable requests default features again (or at least tls).
