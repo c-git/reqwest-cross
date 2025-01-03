@@ -13,10 +13,17 @@ description = "Wrapper around reqwest for use in both native and wasm"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
+anyhow = "1.0.95"
 document-features = "0.2.10"
+egui = { version = "0.30.0", default-features = false, optional = true }
 futures = "0.3.28"
 reqwest = { default-features = false, git = "https://github.com/c-git/reqwest.git", branch = "wasm-cookies" }
+thiserror = "2.0.9"
+tracing = "0.1.41"
 
 # For native compilation
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
@@ -50,7 +57,10 @@ native-tokio = ["dep:tokio"]
 ## This is only needed if you only have one thread and need to release it to prevent a deadlock
 ## because you are waiting on another future (as can be the case in WASM).
 yield_now = ["dep:js-sys", "dep:web-sys"]
+## Add helper functions to ['DataState'] to do egui boiler plate
+egui = ["dep:egui"]
 
+# TODO 4: See if there is a way to stop the autoformatter from adding a space after the #
 #! The following enable a subset of reqwest's features.
 #! If you need a feature that we didn't include please open an issue and let us know and we'll add it.
 #! In the mean while you can depend on reqwest directly with the same version as this crate and enable the feature.

@@ -18,13 +18,16 @@
 //! github and we'd be happy to add it. To communicate between the callback and
 //! the caller you can use various approaches such as:
 //!
+//! - The helper type in this crate [DataState] see [examples
+//!   folder][examples_folder]
 //! - channels  (used in [examples](#examples))
 //! - `Arc<Mutex<_>>`
 //! - promises and so on.
 //!
 //! # Examples
 //!
-//! For examples of how to use this crate see [fetch]
+//! For examples of how to use this crate see [fetch] and the
+//! [examples folder][examples_folder] in the repo
 //!
 //! # Feature Flags
 #![doc = document_features::document_features!()]
@@ -58,9 +61,9 @@
 //! [ehttp-url]: https://docs.rs/ehttp/0.2.0/ehttp/
 //! [tokio-url]: https://docs.rs/tokio/latest/tokio/
 //! [reqwest_client]:https://docs.rs/reqwest/latest/reqwest/struct.Client.html
+//! [examples_folder]: https://github.com/c-git/reqwest-cross/tree/main/examples
 
-// TODO 2: Add using awaiting date to list of ways to poll
-
+mod data_state;
 #[cfg(not(target_arch = "wasm32"))]
 mod native;
 #[cfg(target_arch = "wasm32")]
@@ -69,8 +72,8 @@ mod wrappers;
 #[cfg(feature = "yield_now")]
 mod yield_;
 
+pub use data_state::{Awaiting, DataState, DataStateError, ErrorBounds};
 pub use wrappers::fetch;
-
 #[cfg(feature = "yield_now")]
 pub use yield_::yield_now;
 
