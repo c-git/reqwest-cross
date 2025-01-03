@@ -27,44 +27,11 @@
 //! For examples of how to use this crate see [fetch]
 //!
 //! # Feature Flags
+#![doc = document_features::document_features!()]
 //!
 //! Exactly 1 of the "native-*" flags MUST be enabled to select which runtime to
 //! use for native. If one of the other options needs to be used instead of
 //! tokio then defaults must be disabled.
-//!
-//! - **default**: Enables the tokio runtime and reqwest's default features. If
-//!   disabled do enable requests default features again (or at least tls).
-//! - **native-tokio**: Sets [tokio][tokio-url] as the runtime to use for
-//!   native. (Default)
-//! - reqwest_default: Enables reqwest's default features
-//! - **yield_now**: Add a function that can be called to yield to the executor.
-//!   This is only needed if you only have one thread and need to release it to
-//!   prevent a deadlock because you are waiting on another future (as can be
-//!   the case in WASM).
-//!
-//! A subset of reqwest features have corresponding feature flags on this create
-//! to enable them. If you need on that we didn't include please open an issue
-//! and let us know and we'll add it. In the mean while you can depend on
-//! reqwest directly with the same version as this crate and enable the feature.
-//! Because features are additive it will be enabled but note that if the
-//! version goes out of sync you're going to have a bad time with being unable
-//! to compile.
-//!
-//! - default-tls
-//! - native-tls
-//! - rustls-tls
-//! - http2
-//! - json
-//! - cookies
-//! - hickory-dns
-//! - multipart
-//! - socks
-//! - stream
-//! - brotli
-//! - deflate
-//! - gzip
-//! - zstd
-//!
 //!
 //! # Tradeoffs
 //!
@@ -91,7 +58,7 @@
 //! [ehttp-url]: https://docs.rs/ehttp/0.2.0/ehttp/
 //! [tokio-url]: https://docs.rs/tokio/latest/tokio/
 
-// TODO 1: test using `document_features` for documenting features
+// TODO 2: Add using awaiting date to list of ways to poll
 
 #[cfg(not(target_arch = "wasm32"))]
 mod native;

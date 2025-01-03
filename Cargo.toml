@@ -14,6 +14,7 @@ description = "Wrapper around reqwest for use in both native and wasm"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+document-features = "0.2.10"
 futures = "0.3.28"
 reqwest = { default-features = false, git = "https://github.com/c-git/reqwest.git", branch = "wasm-cookies" }
 
@@ -38,24 +39,48 @@ name = "loop_yield"
 required-features = ["yield_now"]
 
 [features]
+## Enables the tokio runtime and reqwest's default features.
+## If default-features gets disabled do ensure you at least enable tls, unless you explicitly do not want tls support.
 default = ["native-tokio", "reqwest_default"]
+## Enables reqwest's default features
 reqwest_default = ["reqwest/default"]
+## Sets [tokio][tokio-url] as the runtime to use for native
 native-tokio = ["dep:tokio"]
+## Add a function that can be called to yield to the executor.
+## This is only needed if you only have one thread and need to release it to prevent a deadlock
+## because you are waiting on another future (as can be the case in WASM).
 yield_now = ["dep:js-sys", "dep:web-sys"]
-# If we add support for other runtimes we need to update CI to test each separately (rn tests all features together)
 
-# The following are just to enable the corresponding features in reqwest
+#! The following enable a subset of reqwest's features.
+#! If you need a feature that we didn't include please open an issue and let us know and we'll add it.
+#! In the mean while you can depend on reqwest directly with the same version as this crate and enable the feature.
+#! Because features are additive it will be enabled but note that if the version goes out of sync it will cause compilation issues.
+
+## Enables the feature with the same name on reqwest
 default-tls = ["reqwest/default-tls"]
+## Enables the feature with the same name on reqwest
 native-tls = ["reqwest/native-tls"]
+## Enables the feature with the same name on reqwest
 rustls-tls = ["reqwest/rustls-tls"]
+## Enables the feature with the same name on reqwest
 http2 = ["reqwest/http2"]
+## Enables the feature with the same name on reqwest
 json = ["reqwest/json"]
+## Enables the feature with the same name on reqwest
 cookies = ["reqwest/cookies"]
+## Enables the feature with the same name on reqwest
 hickory-dns = ["reqwest/hickory-dns"]
+## Enables the feature with the same name on reqwest
 multipart = ["reqwest/multipart"]
+## Enables the feature with the same name on reqwest
 socks = ["reqwest/socks"]
+## Enables the feature with the same name on reqwest
 stream = ["reqwest/stream"]
+## Enables the feature with the same name on reqwest
 brotli = ["reqwest/brotli"]
+## Enables the feature with the same name on reqwest
 deflate = ["reqwest/deflate"]
+## Enables the feature with the same name on reqwest
 gzip = ["reqwest/gzip"]
+## Enables the feature with the same name on reqwest
 zstd = ["reqwest/zstd"]

@@ -1286,6 +1286,7 @@ dependencies = [
 name = "reqwest-cross"
 version = "0.5.0-dev"
 dependencies = [
+ "document-features",
  "futures",
  "js-sys",
  "reqwest",
