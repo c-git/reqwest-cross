@@ -71,17 +71,16 @@
 //!
 //! # Tradeoffs
 //!
-//! **Exposing underlying framework that actually sends the requests**: The
-//! currently selected approach of exposing and using [reqwest::RequestBuilder]
-//! is much more flexible than the fully isolated approach used by
-//! [ehttp][ehttp-url] and is generally desirable as it allows for reuse of the
-//! same [reqwest::Client] as recommended by [reqwest][reqwest-url].However,
-//! since [reqwest::Client] is asynchronous it requires an available runtime.
-//! For wasm the spawning of the futures is handled by
-//! [wasm-bindgen-futures](https://docs.rs/wasm-bindgen-futures/latest/wasm_bindgen_futures/)
+//! # Exposing underlying framework that actually sends the requests
+//!  The currently selected approach of exposing and using
+//! [reqwest::RequestBuilder] is much more flexible than the fully isolated
+//! approach used by [ehttp][ehttp-url] and is generally desirable as it allows
+//! for reuse of the same [reqwest::Client] as recommended by
+//! [reqwest][reqwest-url].However, since [reqwest::Client] is asynchronous it
+//! requires an available runtime. For wasm the spawning of the futures is
+//! handled by [wasm-bindgen-futures](https://docs.rs/wasm-bindgen-futures/latest/wasm_bindgen_futures/)
 //! but for local which runtime is specified using [feature
-//! flags](#feature-flags). If the one you want is not listed please create an
-//! [issue](https://github.com/c-git/reqwest-cross/issues) and I'll attempt to add it.
+//! flags](#feature-flags).
 //!
 //! # How to run tokio on "secondary" thread
 //!
