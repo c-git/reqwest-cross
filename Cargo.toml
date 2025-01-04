@@ -45,6 +45,10 @@ tokio = { version = "1.27.0", default-features = false, features = ["macros", "r
 name = "loop_yield_custom"
 required-features = ["yield_now"]
 
+[[example]]
+name = "loop_yield_data_state"
+required-features = ["yield_now"]
+
 [features]
 ## Enables the tokio runtime and reqwest's default features.
 ## If default-features gets disabled do ensure you at least enable tls, unless you explicitly do not want tls support.
