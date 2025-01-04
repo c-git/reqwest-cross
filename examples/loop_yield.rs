@@ -1,8 +1,8 @@
 // Native and WASM require different main functions but after that it should be
-// the same Uses yield but yield isn't available yet for wasm_bindgen_futures so
+// the same. Uses yield but yield isn't available yet for wasm_bindgen_futures so
 // uses a workaround found (poll-promise might be better)
 
-use reqwest_cross::fetch;
+use reqwest_cross::{fetch, reqwest};
 
 #[cfg(all(not(target_arch = "wasm32"), feature = "native-tokio"))]
 #[tokio::main]

@@ -23,6 +23,8 @@ jobs:
     steps:
       - uses: wykies/checkout@main
       - uses: wykies/setup-rust-toolchain@main
+      - name: Run examples
+        run: cargo test --all-features --examples
       - name: Run tests
         run: cargo test --all-features
 
