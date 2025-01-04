@@ -73,7 +73,7 @@ mod wrappers;
 mod yield_;
 
 pub use data_state::{Awaiting, DataState, DataStateError, ErrorBounds};
-pub use wrappers::fetch;
+pub use wrappers::{fetch, fetch_plus};
 #[cfg(feature = "yield_now")]
 pub use yield_::yield_now;
 

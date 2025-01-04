@@ -2,8 +2,8 @@
 // the same. This example demonstrates how this crate can be used with the DataState type.
 
 use anyhow::Context;
-use reqwest::{Method, RequestBuilder, StatusCode};
-use reqwest_cross::{fetch, reqwest, Awaiting, DataState};
+use reqwest::Method;
+use reqwest_cross::{fetch_plus, reqwest, Awaiting, DataState};
 
 #[cfg(all(not(target_arch = "wasm32"), feature = "native-tokio"))]
 #[tokio::main]
@@ -37,9 +37,14 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
         } else {
             state.get(|| {
                 let req = client.request(Method::GET, "http://httpbin.org/get");
-                Awaiting(send_request_give_back_status(req, || {
+                let response_handler = |resp: reqwest::Result<reqwest::Response>| async {
+                    resp.map(|resp| resp.status())
+                        .context("Request failed, got an error back")
+                };
+                let ui_notify = || {
                     println!("Request Completed, this is where you would wake up your UI thread");
-                }))
+                };
+                Awaiting(fetch_plus(req, response_handler, ui_notify))
             });
             reqwest_cross::yield_now().await;
         }
@@ -48,28 +53,7 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn send_request_give_back_status<F>(
-    req: RequestBuilder,
-    ui_notify: F,
-) -> reqwest_cross::oneshot::Receiver<anyhow::Result<StatusCode>>
-where
-    F: FnOnce() + Send + 'static,
-{
-    let (tx, rx) = reqwest_cross::oneshot::channel();
-    let on_done = move |resp: reqwest::Result<reqwest::Response>| async {
-        let status_code = resp
-            .map(|resp| resp.status())
-            .context("Request failed, got an error back");
-        tx.send(status_code).expect("failed to send oneshot msg");
-        ui_notify();
-    };
-    fetch(req, on_done);
-    println!("Request sent");
-    rx
-}
-
 #[cfg(all(test, not(target_arch = "wasm32")))]
-
 mod tests {
 
     #[tokio::test]

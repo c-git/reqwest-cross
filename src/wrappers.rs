@@ -1,6 +1,9 @@
 //! Stores the wrapper functions that can be called from either native or wasm
 //! code
 
+use std::{fmt::Debug, future::Future};
+use tracing::error;
+
 #[cfg(not(target_arch = "wasm32"))]
 /// Performs a HTTP requests and calls the given callback when done. NB: Needs
 /// to use a callback to prevent blocking on the thread that initiates the
@@ -75,4 +78,29 @@ where
     F: futures::Future<Output = ()> + 'static,
 {
     crate::wasm::spawn(future);
+}
+
+/// Wraps the call to fetch with the surrounding boilerplate
+pub fn fetch_plus<FResponseHandler, FNotify, Fut, Ret>(
+    req: reqwest::RequestBuilder,
+    response_handler: FResponseHandler,
+    ui_notify: FNotify,
+) -> crate::oneshot::Receiver<anyhow::Result<Ret>>
+where
+    FResponseHandler: FnOnce(reqwest::Result<reqwest::Response>) -> Fut + Send + 'static,
+    Fut: Future<Output = anyhow::Result<Ret>> + Send,
+    Ret: Send + 'static,
+    Fut::Output: Debug,
+    FNotify: FnOnce() + Send + 'static,
+{
+    let (tx, rx) = crate::oneshot::channel();
+    let on_done = move |resp: reqwest::Result<reqwest::Response>| async {
+        let output = response_handler(resp).await;
+        match tx.send(output) {
+            Ok(()) => ui_notify(),
+            Err(handler_output) => error!(?handler_output, "failed to send output from handler"),
+        };
+    };
+    fetch(req, on_done);
+    rx
 }
