@@ -15,7 +15,7 @@ use tracing::error;
 /// [folder](https://github.com/c-git/reqwest-cross/tree/main/examples)
 /// for more complete examples.
 ///
-/// # Tokio example
+/// # Example
 /// ```rust
 /// # use reqwest_cross::fetch;
 ///
@@ -83,8 +83,30 @@ where
     crate::wasm::spawn(future);
 }
 
-// TODO 2: Add example to documentation
-/// Wraps the call to fetch with the surrounding boilerplate.
+/// Wraps the call to [fetch] with the surrounding boilerplate.
+///
+/// # Example
+/// ```rust
+/// # use reqwest_cross::fetch_plus;
+/// #
+/// # #[tokio::main(flavor = "current_thread")]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+///     let client = reqwest::Client::new();
+///     let request = client.get("http://httpbin.org/get");
+///     let handler = |result: Result<reqwest::Response, reqwest::Error>| async {
+///         Ok(result.expect("Expecting Response not Error").status())
+///     };
+///     let rx = fetch_plus(request, handler, || {});
+///     let status = rx
+///         .await //In actual use case code to prevent blocking use try_recv instead
+///         .expect("failed to receive response, sender panicked?")?;
+///     assert_eq!(status, 200);
+/// #    Ok(())
+/// # }
+///
+/// # #[cfg(target_arch = "wasm32")]
+/// # fn main(){}
+/// ```
 pub fn fetch_plus<FResponseHandler, FNotify, Fut, Ret>(
     req: reqwest::RequestBuilder,
     response_handler: FResponseHandler,
