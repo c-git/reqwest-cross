@@ -68,7 +68,6 @@ yield_now = ["dep:js-sys", "dep:web-sys"]
 ## Add helper functions to ['DataState'] to do egui boiler plate
 egui = ["dep:egui"]
 
-# TODO 4: See if there is a way to stop the autoformatter from adding a space after the #
 #! The following enable a subset of reqwest's features.
 #! If you need a feature that we didn't include please open an issue and let us know and we'll add it.
 #! In the mean while you can depend on reqwest directly with the same version as this crate and enable the feature.
