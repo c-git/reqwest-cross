@@ -2,6 +2,7 @@
 
 use std::fmt::{Debug, Display};
 
+use anyhow::anyhow;
 use futures::channel::oneshot;
 use thiserror::Error;
 use tracing::{error, warn};
@@ -17,9 +18,14 @@ pub enum DataStateError<E: ErrorBounds> {
     /// Sender was dropped, request cancelled
     #[error("Request sender was dropped")]
     SenderDropped(oneshot::Canceled),
+
     /// The response received from the request was an error
     #[error("Response received was an error: {0}")]
     ErrorResponse(E),
+
+    /// This variant is supplied for use by application code
+    #[error(transparent)]
+    FromE(E),
 }
 
 /// Used to represent data that is pending being available
@@ -34,7 +40,7 @@ pub enum DataState<T, E: ErrorBounds = anyhow::Error> {
     #[default]
     None,
     /// Represents data has been requested and awaiting it being available
-    AwaitingResponse(Awaiting<T, E>),
+    AwaitingResponse(Awaiting<T, E>), // TODO 4: Add support for a timeout on waiting
     /// Represents data that is available for use
     Present(T),
     /// Represents an error that Occurred
@@ -159,5 +165,23 @@ impl<T, E: ErrorBounds> AsRef<DataState<T, E>> for DataState<T, E> {
 impl<T, E: ErrorBounds> AsMut<DataState<T, E>> for DataState<T, E> {
     fn as_mut(&mut self) -> &mut DataState<T, E> {
         self
+    }
+}
+
+impl<E: ErrorBounds> From<E> for DataStateError<E> {
+    fn from(value: E) -> Self {
+        Self::FromE(value)
+    }
+}
+
+impl From<&str> for DataStateError<anyhow::Error> {
+    fn from(value: &str) -> Self {
+        value.to_string().into()
+    }
+}
+
+impl From<String> for DataStateError<anyhow::Error> {
+    fn from(value: String) -> Self {
+        anyhow!(value).into()
     }
 }
