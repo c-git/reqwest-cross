@@ -97,9 +97,10 @@ where
     let on_done = move |resp: reqwest::Result<reqwest::Response>| async {
         let output = response_handler(resp).await;
         match tx.send(output) {
-            Ok(()) => ui_notify(),
+            Ok(()) => {}
             Err(handler_output) => error!(?handler_output, "failed to send output from handler"),
         };
+        ui_notify();
     };
     fetch(req, on_done);
     rx
