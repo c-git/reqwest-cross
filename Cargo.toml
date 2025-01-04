@@ -53,14 +53,18 @@ required-features = ["yield_now"]
 ## Enables the tokio runtime and reqwest's default features.
 ## If default-features gets disabled do ensure you at least enable tls, unless you explicitly do not want tls support.
 default = ["native-tokio", "reqwest_default"]
+
 ## Enables reqwest's default features
 reqwest_default = ["reqwest/default"]
+
 ## Sets [tokio][tokio-url] as the runtime to use for native
 native-tokio = ["dep:tokio"]
+
 ## Add a function that can be called to yield to the executor.
 ## This is only needed if you only have one thread and need to release it to prevent a deadlock
 ## because you are waiting on another future (as can be the case in WASM).
 yield_now = ["dep:js-sys", "dep:web-sys"]
+
 ## Add helper functions to ['DataState'] to do egui boiler plate
 egui = ["dep:egui"]
 
