@@ -62,7 +62,10 @@ native-tokio = ["dep:tokio"]
 
 ## Add a function that can be called to yield to the executor.
 ## This is only needed if you only have one thread and need to release it to prevent a deadlock
-## because you are waiting on another future (as can be the case in WASM).
+## because you are waiting on another future (as can be the case in WASM). If you are using a
+## framework such as egui this may not be necessary as they already allow for other futures to
+## make progress. But one test will quickly let you know either way. If the program freezes
+## after you make a request then this can help.
 yield_now = ["dep:js-sys", "dep:web-sys"]
 
 ## Add helper functions to ['DataState'] to do egui boiler plate

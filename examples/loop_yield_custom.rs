@@ -1,6 +1,8 @@
 // Native and WASM require different main functions but after that it should be
 // the same. Uses yield but yield isn't available yet for wasm_bindgen_futures
-// so uses a workaround found (poll-promise might be better)
+// so uses a workaround found. If you're building a bigger application or have
+// multiple places you need to make requests look at the
+// loop_yield_data_state.rs example instead.
 
 use reqwest_cross::{fetch, reqwest};
 

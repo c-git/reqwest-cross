@@ -5,10 +5,13 @@ use std::{fmt::Debug, future::Future};
 use tracing::error;
 
 #[cfg(not(target_arch = "wasm32"))]
-/// Performs a HTTP requests and calls the given callback when done. NB: Needs
-/// to use a callback to prevent blocking on the thread that initiates the
-/// fetch. Note: Instead of calling get like in the example you can use post,
-/// put, etc. (See [reqwest::Client]). Also see the examples
+/// Performs a HTTP requests and calls the given callback when done with the
+/// result of the request. This is a more flexible API but requires more
+/// boilerplate, see [fetch_plus] which wraps a lot more of the boilerplate
+/// especially if you need a "wake_up" function.  NB: Needs to use a callback to
+/// prevent blocking on the thread that initiates the fetch. Note: Instead of
+/// calling get like in the example you can use post, put, etc. (See
+/// [reqwest::Client]). Also see the examples
 /// [folder](https://github.com/c-git/reqwest-cross/tree/main/examples)
 /// for more complete examples.
 ///
@@ -80,7 +83,8 @@ where
     crate::wasm::spawn(future);
 }
 
-/// Wraps the call to fetch with the surrounding boilerplate
+// TODO 2: Add example to documentation
+/// Wraps the call to fetch with the surrounding boilerplate.
 pub fn fetch_plus<FResponseHandler, FNotify, Fut, Ret>(
     req: reqwest::RequestBuilder,
     response_handler: FResponseHandler,

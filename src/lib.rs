@@ -12,7 +12,15 @@
 //! wrapper around [reqwest][reqwest-url] for ease of use in applications that
 //! target BOTH native and wasm and do not want to block in the calling
 //! task/thread, for example in a UI task/thread or game loop. This is achieved
-//! by using callbacks. NOTE: At least 1 [feature flag](#feature-flags) for
+//! by using callbacks. This crate provides a few options to choose from and the
+//! one that fits best for you depends on what you need. A good way to get an
+//! idea what level of abstraction would work for you is by looking at the
+//! [examples][#examples]. I would say if you're writing a larger application
+//! then [DataState] can abstract away a lot of the boiler plate. In addition I
+//! would prefer [fetch_plus]  over [fetch] unless you don't need the UI
+//! callback and [fetch_plus] ends up as the one with more boiler plate.
+//!
+//! NOTE: At least 1 [feature flag](#feature-flags) for
 //! native MUST be set to choose which runtime to use. Currently only Tokio is
 //! supported but if you want to use another runtime please open an issue on
 //! github and we'd be happy to add it. To communicate between the callback and
@@ -26,7 +34,7 @@
 //!
 //! # Examples
 //!
-//! For examples of how to use this crate see [fetch] and the
+//! For examples of how to use this crate see [fetch], [fetch_plus] and the
 //! [examples folder][examples_folder] in the repo
 //!
 //! # Feature Flags
@@ -63,6 +71,8 @@
 //! [reqwest_client]:https://docs.rs/reqwest/latest/reqwest/struct.Client.html
 //! [examples_folder]: https://github.com/c-git/reqwest-cross/tree/main/examples
 
+// TODO 4: Add link checking to this crate
+
 mod data_state;
 #[cfg(not(target_arch = "wasm32"))]
 mod native;
@@ -73,7 +83,7 @@ mod wrappers;
 mod yield_;
 
 pub use data_state::{Awaiting, DataState, DataStateError, ErrorBounds};
-pub use wrappers::{fetch, fetch_plus};
+pub use wrappers::{fetch, fetch_plus, spawn};
 #[cfg(feature = "yield_now")]
 pub use yield_::yield_now;
 
