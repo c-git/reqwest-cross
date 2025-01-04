@@ -2,7 +2,7 @@
   "rust-analyzer.showUnlinkedFileNotification": false,
   "cSpell.words": [
     "jsvalue"
-  ]
-  // "code-runner.customCommand": "wasm-pack test --headless --firefox",
+  ],
   // "rust-analyzer.cargo.target": "wasm32-unknown-unknown" // Uncomment to use rust-analyzer on wasm code instead
+  "rust-analyzer.cargo.features": ["yield_now"]
 }
