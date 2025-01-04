@@ -42,7 +42,7 @@ wasm-bindgen-test = "0.3.34"
 tokio = { version = "1.27.0", default-features = false, features = ["macros", "rt-multi-thread"] }
 
 [[example]]
-name = "loop_yield"
+name = "loop_yield_custom"
 required-features = ["yield_now"]
 
 [features]
