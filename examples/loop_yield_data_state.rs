@@ -2,7 +2,6 @@
 // the same. This example demonstrates how this crate can be used with the DataState type.
 
 use anyhow::Context;
-use reqwest::Method;
 use reqwest_cross::{fetch_plus, reqwest, Awaiting, DataState};
 
 #[cfg(all(not(target_arch = "wasm32"), feature = "native-tokio"))]
@@ -36,7 +35,7 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
             break;
         } else {
             state.get(|| {
-                let req = client.request(Method::GET, "http://httpbin.org/get");
+                let req = client.get("http://httpbin.org/get");
                 let response_handler = |resp: reqwest::Result<reqwest::Response>| async {
                     resp.map(|resp| resp.status())
                         .context("Request failed, got an error back")
