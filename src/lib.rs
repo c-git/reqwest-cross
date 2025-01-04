@@ -74,16 +74,12 @@
 // TODO 4: Add link checking to this crate
 
 mod data_state;
-#[cfg(not(target_arch = "wasm32"))]
-mod native;
-#[cfg(target_arch = "wasm32")]
-mod wasm;
-mod wrappers;
+mod platform;
 #[cfg(feature = "yield_now")]
 mod yield_;
 
 pub use data_state::{Awaiting, DataState, DataStateError, ErrorBounds};
-pub use wrappers::{fetch, fetch_plus, spawn};
+pub use platform::{fetch, fetch_plus, spawn};
 #[cfg(feature = "yield_now")]
 pub use yield_::yield_now;
 
