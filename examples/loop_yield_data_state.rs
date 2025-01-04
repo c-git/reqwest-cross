@@ -1,5 +1,6 @@
 // Native and WASM require different main functions but after that it should be
-// the same. This example demonstrates how this crate can be used with the DataState type.
+// the same. This example demonstrates how this crate can be used with the
+// DataState type.
 
 use anyhow::Context;
 use reqwest_cross::{fetch_plus, reqwest, Awaiting, DataState};
