@@ -60,18 +60,30 @@ impl<T, E: ErrorBounds> DataState<T, E> {
     /// Some branches lead to no UI being displayed, in particular when the data
     /// or an error is received (On the expectation it will show next frame).
     /// When in an error state the error messages will show as applicable.
+    /// If called an already has data present this function does nothing and
+    /// returns [CanMakeProgress::UnableToMakeProgress]
     ///
     /// If a `retry_msg` is provided then it overrides the default
     ///
     /// Note see [`Self::get`] for more info.
-    pub fn egui_get<F>(&mut self, ui: &mut egui::Ui, retry_msg: Option<&str>, fetch_fn: F)
+    #[must_use]
+    pub fn egui_get<F>(
+        &mut self,
+        ui: &mut egui::Ui,
+        retry_msg: Option<&str>,
+        fetch_fn: F,
+    ) -> CanMakeProgress
     where
         F: FnOnce() -> Awaiting<T, E>,
     {
         match self {
             DataState::None => {
                 ui.spinner();
-                self.get(fetch_fn);
+                let is_able_to_make_progress = self.get(fetch_fn).is_able_to_make_progress();
+                debug_assert!(
+                    is_able_to_make_progress,
+                    "Should only be calling get if there is a point"
+                );
             }
             DataState::AwaitingResponse(rx) => {
                 if let Some(new_state) = Self::await_data(rx) {
@@ -82,6 +94,7 @@ impl<T, E: ErrorBounds> DataState<T, E> {
             }
             DataState::Present(_data) => {
                 // Does nothing as data is already present
+                return CanMakeProgress::UnableToMakeProgress;
             }
             DataState::Failed(e) => {
                 ui.colored_label(ui.visuals().error_fg_color, e.to_string());
@@ -90,6 +103,7 @@ impl<T, E: ErrorBounds> DataState<T, E> {
                 }
             }
         }
+        CanMakeProgress::AbleToMakeProgress
     }
 
     /// Attempts to load the data and returns if it is able to make progress.
