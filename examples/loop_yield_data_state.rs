@@ -22,6 +22,10 @@ fn main() {
 }
 
 async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
+    // Allows for one iteration where we see no progress but next loop should go
+    // into first branch
+    let mut seen_no_progress = false;
+
     let client = reqwest::Client::new();
     let mut state = DataState::None;
 
@@ -35,22 +39,22 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
             assert_eq!(status_code, &200);
             break;
         } else {
-            let is_able_to_make_progress = state
-                .get(|| {
-                    let req = client.get("http://httpbin.org/get");
-                    let response_handler = |resp: reqwest::Result<reqwest::Response>| async {
-                        resp.map(|resp| resp.status())
-                            .context("Request failed, got an error back")
-                    };
-                    let ui_notify = || {
-                        println!(
-                            "Request Completed, this is where you would wake up your UI thread"
-                        );
-                    };
-                    Awaiting(fetch_plus(req, response_handler, ui_notify))
-                })
-                .is_able_to_make_progress();
-            assert!(is_able_to_make_progress);
+            let outcome = state.get(|| {
+                let req = client.get("http://httpbin.org/get");
+                let response_handler = |resp: reqwest::Result<reqwest::Response>| async {
+                    resp.map(|resp| resp.status())
+                        .context("Request failed, got an error back")
+                };
+                let ui_notify = || {
+                    println!("Request Completed, this is where you would wake up your UI thread");
+                };
+                Awaiting(fetch_plus(req, response_handler, ui_notify))
+            });
+            assert!(!seen_no_progress);
+            if outcome.is_unable_to_make_progress() {
+                // We should never get into this branch again
+                seen_no_progress = true;
+            }
             reqwest_cross::yield_now().await;
         }
     }
