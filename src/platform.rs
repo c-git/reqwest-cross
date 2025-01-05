@@ -36,6 +36,7 @@ pub use wasm::*;
 /// # #[cfg(target_arch = "wasm32")]
 /// # fn main(){}
 /// ```
+#[must_use = "receiver is needed to get the response"]
 pub fn fetch_plus<FResponseHandler, FNotify, Fut, Ret>(
     req: reqwest::RequestBuilder,
     response_handler: FResponseHandler,
