@@ -8,8 +8,8 @@ use thiserror::Error;
 use tracing::{error, warn};
 
 /// Provides a common way to specify the bounds errors are expected to meet
-pub trait ErrorBounds: Display + Send + Sync + 'static {}
-impl<T: Display + Send + Sync + 'static> ErrorBounds for T {}
+pub trait ErrorBounds: Display + Send + Sync + 'static + Debug {}
+impl<T: Display + Send + Sync + 'static + Debug> ErrorBounds for T {}
 
 #[derive(Error, Debug)]
 /// Represents the types of errors that can occur while using [DataState]
@@ -146,12 +146,9 @@ impl<T, E: ErrorBounds> DataState<T, E> {
             Ok(recv_opt) => match recv_opt {
                 Some(outcome_result) => match outcome_result {
                     Ok(data) => DataState::Present(data),
-                    Err(e) => {
-                        warn!(
-                            err_msg = e.to_string(),
-                            "Error response received instead of the data"
-                        );
-                        DataState::Failed(DataStateError::ErrorResponse(e))
+                    Err(err_msg) => {
+                        warn!(?err_msg, "Error response received instead of the data");
+                        DataState::Failed(DataStateError::ErrorResponse(err_msg))
                     }
                 },
                 None => {
