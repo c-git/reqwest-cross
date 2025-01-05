@@ -25,12 +25,10 @@ pub use wasm::*;
 ///     let client = reqwest::Client::new();
 ///     let request = client.get("http://httpbin.org/get");
 ///     let handler = |result: Result<reqwest::Response, reqwest::Error>| async {
-///         Ok(result.expect("Expecting Response not Error").status())
+///         result.expect("Expecting Response not Error").status()
 ///     };
 ///     let rx = fetch_plus(request, handler, || {});
-///     let status = rx
-///         .await //In actual use case code to prevent blocking use try_recv instead
-///         .expect("failed to receive response, sender panicked?")?;
+///     let status = rx.await?; //In actual use case code to prevent blocking use try_recv instead
 ///     assert_eq!(status, 200);
 /// #    Ok(())
 /// # }
