@@ -27,6 +27,14 @@ pub enum DataStateError<E: ErrorBounds> {
     FromE(E),
 }
 
+#[derive(Debug)]
+/// Provides a way to ensure the calling code knows if it is calling a function
+/// that cannot do anything useful anymore
+pub enum CanMakeProgress {
+    AbleToMakeProgress,
+    UnableToMakeProgress,
+}
+
 /// Used to represent data that is pending being available
 #[derive(Debug)]
 pub struct Awaiting<T, E: ErrorBounds>(pub oneshot::Receiver<Result<T, E>>);
@@ -84,11 +92,12 @@ impl<T, E: ErrorBounds> DataState<T, E> {
         }
     }
 
-    /// Attempts to load the data.
+    /// Attempts to load the data and returns if it is able to make progress.
     ///
     /// Note: F needs to return `AwaitingType<T>` and not T because it needs to
     /// be able to be pending if T is not ready.
-    pub fn get<F>(&mut self, fetch_fn: F)
+    #[must_use]
+    pub fn get<F>(&mut self, fetch_fn: F) -> CanMakeProgress
     where
         F: FnOnce() -> Awaiting<T, E>,
     {
@@ -96,18 +105,22 @@ impl<T, E: ErrorBounds> DataState<T, E> {
             DataState::None => {
                 let rx = fetch_fn();
                 *self = DataState::AwaitingResponse(rx);
+                CanMakeProgress::AbleToMakeProgress
             }
             DataState::AwaitingResponse(rx) => {
                 if let Some(new_state) = Self::await_data(rx) {
                     *self = new_state;
                 }
+                CanMakeProgress::AbleToMakeProgress
             }
             DataState::Present(_data) => {
                 // Does nothing data is already present
+                CanMakeProgress::UnableToMakeProgress
             }
             DataState::Failed(_e) => {
                 // Have no way to let the user know there is an error nothing we
                 // can do here
+                CanMakeProgress::UnableToMakeProgress
             }
         }
     }
@@ -182,5 +195,23 @@ impl From<&str> for DataStateError<anyhow::Error> {
 impl From<String> for DataStateError<anyhow::Error> {
     fn from(value: String) -> Self {
         anyhow!(value).into()
+    }
+}
+
+impl CanMakeProgress {
+    /// Returns `true` if the can make progress is [`AbleToMakeProgress`].
+    ///
+    /// [`AbleToMakeProgress`]: CanMakeProgress::AbleToMakeProgress
+    #[must_use]
+    pub fn is_able_to_make_progress(&self) -> bool {
+        matches!(self, Self::AbleToMakeProgress)
+    }
+
+    /// Returns `true` if the can make progress is [`UnableToMakeProgress`].
+    ///
+    /// [`UnableToMakeProgress`]: CanMakeProgress::UnableToMakeProgress
+    #[must_use]
+    pub fn is_unable_to_make_progress(&self) -> bool {
+        matches!(self, Self::UnableToMakeProgress)
     }
 }

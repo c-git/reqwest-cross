@@ -35,17 +35,22 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
             assert_eq!(status_code, &200);
             break;
         } else {
-            state.get(|| {
-                let req = client.get("http://httpbin.org/get");
-                let response_handler = |resp: reqwest::Result<reqwest::Response>| async {
-                    resp.map(|resp| resp.status())
-                        .context("Request failed, got an error back")
-                };
-                let ui_notify = || {
-                    println!("Request Completed, this is where you would wake up your UI thread");
-                };
-                Awaiting(fetch_plus(req, response_handler, ui_notify))
-            });
+            let is_able_to_make_progress = state
+                .get(|| {
+                    let req = client.get("http://httpbin.org/get");
+                    let response_handler = |resp: reqwest::Result<reqwest::Response>| async {
+                        resp.map(|resp| resp.status())
+                            .context("Request failed, got an error back")
+                    };
+                    let ui_notify = || {
+                        println!(
+                            "Request Completed, this is where you would wake up your UI thread"
+                        );
+                    };
+                    Awaiting(fetch_plus(req, response_handler, ui_notify))
+                })
+                .is_able_to_make_progress();
+            assert!(is_able_to_make_progress);
             reqwest_cross::yield_now().await;
         }
     }
