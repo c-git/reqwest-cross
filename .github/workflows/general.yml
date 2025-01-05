@@ -1,4 +1,4 @@
-name: Rust
+name: Rust General
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,9 +12,12 @@ on:
     branches:
       - main
       - develop
+  workflow_call:
       
 env:
   CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+  RUSTDOCFLAGS: -D warnings
 
 jobs:
   test:
@@ -35,9 +38,10 @@ jobs:
       - uses: wykies/checkout@main
       - uses: wykies/setup-rust-toolchain@main
         with:
+          toolchain: nightly
           components: rustfmt
       - name: Enforce formatting
-        run: cargo fmt --check
+        run: cargo fmt --all --check
 
   clippy:
     name: Clippy
@@ -48,4 +52,4 @@ jobs:
         with:
           components: clippy
       - name: Linting
-        run: cargo clippy -- -D warnings
+        run: cargo clippy --all-features -- -D warnings

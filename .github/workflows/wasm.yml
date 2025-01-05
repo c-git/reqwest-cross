@@ -10,14 +10,14 @@ on:
       - develop
   pull_request: 
     branches:
-      - main
       - develop
+  workflow_call:
       
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
+  test_in_browser:
     name: Test WASM in browser
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +32,7 @@ jobs:
       - name: Run Examples
         run: wasm-pack test --headless --chrome --all-features --examples
 
-  clippy:
+  clippy_wasm:
     name: Clippy WASM
     runs-on: ubuntu-latest
     steps:
