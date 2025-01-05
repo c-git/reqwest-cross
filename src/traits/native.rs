@@ -31,3 +31,12 @@ impl<T, O: BoundedFuture<()>> DoneHandler<O> for T where
 /// A future with the required bounds for the platform
 pub trait BoundedFuture<O>: Future<Output = O> + Send {}
 impl<T, O> BoundedFuture<O> for T where T: Future<Output = O> + Send {}
+
+/// A function able to be used as a Call Back to notify the UI that the request
+/// is ready
+pub trait UiCallBack: 'static + Send + FnOnce() {}
+impl<T> UiCallBack for T where T: 'static + Send + FnOnce() {}
+
+/// Allowed return types
+pub trait ValidReturn: Send + 'static {}
+impl<T: Send + 'static> ValidReturn for T {}

@@ -18,12 +18,3 @@ mod wasm;
 pub use native::*;
 #[cfg(target_arch = "wasm32")]
 pub use wasm::*;
-
-/// A function able to be used as a Call Back to notify the UI that the request
-/// is ready
-pub trait UiCallBack: 'static + Send + FnOnce() {}
-impl<T> UiCallBack for T where T: 'static + Send + FnOnce() {}
-
-/// Allowed return types
-pub trait ValidReturn: Send + 'static {}
-impl<T: Send + 'static> ValidReturn for T {}

@@ -28,3 +28,11 @@ impl<T, O: BoundedFuture<()>> DoneHandler<O> for T where
     T: 'static + FnOnce(reqwest::Result<reqwest::Response>) -> O
 {
 }
+
+/// dox
+pub trait UiCallBack: 'static + FnOnce() {}
+impl<T> UiCallBack for T where T: 'static + FnOnce() {}
+
+/// dox
+pub trait ValidReturn: 'static {}
+impl<T: 'static> ValidReturn for T {}
