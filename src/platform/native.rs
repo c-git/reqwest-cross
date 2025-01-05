@@ -1,16 +1,18 @@
 //! Stores the code specific to native compilations
 // but the comments are for both because these are the ones that show on docs.rs
 
+use crate::{BoundedFuture, DoneHandler};
+
 #[cfg(not(feature = "native-tokio"))]
 compile_error!("Must chose a native runtime by enabling a feature flag. Right now only tokio is supported. If you have a different runtime that you want please create an issue on github.");
 
 /// Performs a HTTP requests and calls the given callback when done with the
 /// result of the request. This is a more flexible API but requires more
-/// boilerplate, see [fetch_plus] which wraps a lot more of the boilerplate
-/// especially if you need a "wake_up" function.  NB: Needs to use a callback to
-/// prevent blocking on the thread that initiates the fetch. Note: Instead of
-/// calling get like in the example you can use post, put, etc. (See
-/// [reqwest::Client]). Also see the examples
+/// boilerplate, see [fetch_plus][crate::fetch_plus] which wraps a lot more of
+/// the boilerplate especially if you need a "wake_up" function.  NB: Needs to
+/// use a callback to prevent blocking on the thread that initiates the fetch.
+/// Note: Instead of calling get like in the example you can use post, put, etc.
+/// (See [reqwest::Client]). Also see the examples
 /// [folder](https://github.com/c-git/reqwest-cross/tree/main/examples)
 /// for more complete examples.
 ///
@@ -40,8 +42,8 @@ compile_error!("Must chose a native runtime by enabling a feature flag. Right no
 /// ```
 pub fn fetch<F, O>(request: reqwest::RequestBuilder, on_done: F)
 where
-    F: 'static + Send + FnOnce(reqwest::Result<reqwest::Response>) -> O,
-    O: futures::Future<Output = ()> + Send,
+    F: DoneHandler<O>,
+    O: BoundedFuture<()>,
 {
     let future = async move {
         let result = request.send().await;
@@ -50,7 +52,8 @@ where
     spawn(future);
 }
 
-/// Spawns a future on the underlying runtime in a cross platform way
+/// Spawns a future on the underlying runtime in a cross platform way (NB: the
+/// Send bound is removed in WASM)
 #[cfg(feature = "native-tokio")]
 pub fn spawn<F>(future: F)
 where

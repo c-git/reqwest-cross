@@ -8,7 +8,6 @@ use thiserror::Error;
 use tracing::{error, warn};
 
 /// Provides a common way to specify the bounds errors are expected to meet
-/// (note it is compatible with anyhow::Error)
 pub trait ErrorBounds: Display + Send + Sync + 'static {}
 impl<T: Display + Send + Sync + 'static> ErrorBounds for T {}
 

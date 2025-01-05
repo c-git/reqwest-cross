@@ -1,15 +1,14 @@
 //! Stores the wrapper functions that can be called from either native or wasm
 //! code
 
-use std::{fmt::Debug, future::Future};
 use tracing::error;
-
 #[cfg(not(target_arch = "wasm32"))]
 mod native;
 #[cfg(target_arch = "wasm32")]
 mod wasm;
 
 // Using * imports to bring them up to this level
+use crate::{BoundedFuture, ResponseHandler, UiCallBack, ValidReturn};
 #[cfg(not(target_arch = "wasm32"))]
 pub use native::*;
 #[cfg(target_arch = "wasm32")]
@@ -43,20 +42,19 @@ pub fn fetch_plus<FResponseHandler, FNotify, Fut, Ret>(
     req: reqwest::RequestBuilder,
     response_handler: FResponseHandler,
     ui_notify: FNotify,
-) -> crate::oneshot::Receiver<anyhow::Result<Ret>>
+) -> crate::oneshot::Receiver<Ret>
 where
-    FResponseHandler: FnOnce(reqwest::Result<reqwest::Response>) -> Fut + Send + 'static,
-    Fut: Future<Output = anyhow::Result<Ret>> + Send,
-    Ret: Send + 'static,
-    Fut::Output: Debug,
-    FNotify: FnOnce() + Send + 'static,
+    FResponseHandler: ResponseHandler<Fut, Ret>,
+    Fut: BoundedFuture<Ret>,
+    Ret: ValidReturn,
+    FNotify: UiCallBack,
 {
     let (tx, rx) = crate::oneshot::channel();
     let on_done = move |resp: reqwest::Result<reqwest::Response>| async {
         let output = response_handler(resp).await;
         match tx.send(output) {
             Ok(()) => {}
-            Err(handler_output) => error!(?handler_output, "failed to send output from handler"),
+            Err(_output) => error!("failed to send output from handler"),
         };
         ui_notify();
     };
