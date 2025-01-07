@@ -1,7 +1,7 @@
 // Native and WASM require different main functions but after that it should be
-// the same
+// the same. This example shows how to do a simple fetch.
 
-use reqwest_cross::fetch;
+use reqwest_cross::{fetch, reqwest};
 
 #[cfg(all(not(target_arch = "wasm32"), feature = "native-tokio"))]
 #[tokio::main]
@@ -21,7 +21,7 @@ fn main() {
 
 async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
-    let request = client.get("http://httpbin.org/get");
+    let request = client.get("https://httpbin.org/get");
     let (tx, rx) = futures::channel::oneshot::channel();
 
     fetch(

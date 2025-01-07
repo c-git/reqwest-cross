@@ -1,0 +1,6 @@
+[jobs.test_examples]
+command = ["cargo", "test", "--features=yield_now,egui", "--examples"]
+need_stdout = true
+
+[keybindings]
+e = "job:test_examples"
