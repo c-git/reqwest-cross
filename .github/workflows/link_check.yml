@@ -1,0 +1,24 @@
+name: Links Checker
+
+on:
+  pull_request: 
+    branches:
+      - main
+  schedule:
+    - cron: "12 02 4 * *"
+
+jobs:
+  link_checker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wykies/checkout@main
+      - name: Restore lychee cache
+        uses: actions/cache@v4
+        with:
+            path: .lycheecache
+            key: cache-lychee-${{ github.ref }}
+            restore-keys: cache-lychee-
+      - name: Run lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+            args: --cache --no-progress --require-https './**/*.md' './**/*.html' './**/*.rs'

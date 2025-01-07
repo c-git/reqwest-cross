@@ -71,8 +71,6 @@
 //! [reqwest_client]:https://docs.rs/reqwest/latest/reqwest/struct.Client.html
 //! [examples_folder]: https://github.com/c-git/reqwest-cross/tree/main/examples
 
-// TODO 4: Add link checking to this crate
-
 mod data_state;
 mod platform;
 mod traits;
