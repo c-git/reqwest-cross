@@ -23,7 +23,7 @@ pub use wasm::*;
 /// # #[tokio::main(flavor = "current_thread")]
 /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ///     let client = reqwest::Client::new();
-///     let request = client.get("http://httpbin.org/get");
+///     let request = client.get("https://httpbin.org/get");
 ///     let handler = |result: Result<reqwest::Response, reqwest::Error>| async {
 ///         result.expect("Expecting Response not Error").status()
 ///     };

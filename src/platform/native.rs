@@ -24,7 +24,7 @@ compile_error!("Must chose a native runtime by enabling a feature flag. Right no
 /// # #[tokio::main(flavor = "current_thread")]
 /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ///  let client = reqwest::Client::new();
-///  let request = client.get("http://httpbin.org/get");
+///  let request = client.get("https://httpbin.org/get");
 ///  let (tx, rx) = futures::channel::oneshot::channel();
 ///
 ///  fetch(request, move |result: Result<reqwest::Response, reqwest::Error>| async {

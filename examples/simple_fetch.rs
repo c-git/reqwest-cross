@@ -21,7 +21,7 @@ fn main() {
 
 async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
-    let request = client.get("http://httpbin.org/get");
+    let request = client.get("https://httpbin.org/get");
     let (tx, rx) = futures::channel::oneshot::channel();
 
     fetch(

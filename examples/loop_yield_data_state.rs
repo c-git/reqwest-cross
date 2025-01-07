@@ -40,7 +40,7 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
             break;
         } else {
             let outcome = state.get(|| {
-                let req = client.get("http://httpbin.org/get");
+                let req = client.get("https://httpbin.org/get");
                 let response_handler = |resp: reqwest::Result<reqwest::Response>| async {
                     resp.map(|resp| resp.status())
                         .context("Request failed, got an error back")
