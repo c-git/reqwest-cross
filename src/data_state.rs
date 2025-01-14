@@ -1,9 +1,8 @@
 //! Helpers for handling pending data.
 
-use std::fmt::{Debug, Display};
-
 use anyhow::anyhow;
 use futures::channel::oneshot;
+use std::fmt::{Debug, Display};
 use thiserror::Error;
 use tracing::{error, warn};
 
@@ -81,13 +80,9 @@ impl<T, E: ErrorBounds> DataState<T, E> {
                 ui.spinner();
                 self.get(fetch_fn)
             }
-            DataState::AwaitingResponse(rx) => {
-                if let Some(new_state) = Self::await_data(rx) {
-                    *self = new_state;
-                } else {
-                    ui.spinner();
-                }
-                CanMakeProgress::AbleToMakeProgress
+            DataState::AwaitingResponse(_) => {
+                ui.spinner();
+                self.get(fetch_fn)
             }
             DataState::Present(_data) => {
                 // Does nothing as data is already present
