@@ -79,11 +79,7 @@ impl<T, E: ErrorBounds> DataState<T, E> {
         match self {
             DataState::None => {
                 ui.spinner();
-                let is_able_to_make_progress = self.get(fetch_fn).is_able_to_make_progress();
-                debug_assert!(
-                    is_able_to_make_progress,
-                    "Should only be calling get if there is a point"
-                );
+                self.get(fetch_fn)
             }
             DataState::AwaitingResponse(rx) => {
                 if let Some(new_state) = Self::await_data(rx) {
@@ -91,19 +87,20 @@ impl<T, E: ErrorBounds> DataState<T, E> {
                 } else {
                     ui.spinner();
                 }
+                CanMakeProgress::AbleToMakeProgress
             }
             DataState::Present(_data) => {
                 // Does nothing as data is already present
-                return CanMakeProgress::UnableToMakeProgress;
+                CanMakeProgress::UnableToMakeProgress
             }
             DataState::Failed(e) => {
                 ui.colored_label(ui.visuals().error_fg_color, e.to_string());
                 if ui.button(retry_msg.unwrap_or("Retry Request")).clicked() {
                     *self = DataState::default();
                 }
+                CanMakeProgress::AbleToMakeProgress
             }
         }
-        CanMakeProgress::AbleToMakeProgress
     }
 
     /// Attempts to load the data and returns if it is able to make progress.
@@ -140,7 +137,7 @@ impl<T, E: ErrorBounds> DataState<T, E> {
     }
 
     /// Checks to see if the data is ready and if it is returns a new [`Self`]
-    /// otherwise None
+    /// otherwise None.
     pub fn await_data(rx: &mut Awaiting<T, E>) -> Option<Self> {
         Some(match rx.0.try_recv() {
             Ok(recv_opt) => match recv_opt {
