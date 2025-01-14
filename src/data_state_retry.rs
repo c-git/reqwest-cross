@@ -93,14 +93,23 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
                 CanMakeProgress::UnableToMakeProgress
             }
             DataState::Failed(e) => {
-                ui.colored_label(
-                    ui.visuals().error_fg_color,
-                    format!("{} attempts exhausted. {e}", self.max_attempts),
-                );
-                if ui.button(retry_msg.unwrap_or("Restart Requests")).clicked() {
-                    self.reset_attempts();
-                    self.inner = DataState::default();
+                if self.attempts_left == 0 {
+                    ui.colored_label(
+                        ui.visuals().error_fg_color,
+                        format!("{} attempts exhausted. {e}", self.max_attempts),
+                    );
+                    if ui.button(retry_msg.unwrap_or("Restart Requests")).clicked() {
+                        self.reset_attempts();
+                        self.inner = DataState::default();
+                    }
+                } else {
+                    let is_able_to_make_progress = self.get(fetch_fn).is_able_to_make_progress();
+                    assert!(
+                        is_able_to_make_progress,
+                        "if this is not true something is very wrong"
+                    );
                 }
+
                 CanMakeProgress::AbleToMakeProgress
             }
         }
