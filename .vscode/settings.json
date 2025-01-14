@@ -1,6 +1,7 @@
 {
   "rust-analyzer.showUnlinkedFileNotification": false,
   "cSpell.words": [
+    "getrandom",
     "jsvalue"
   ],
   // "rust-analyzer.cargo.target": "wasm32-unknown-unknown" // Uncomment to use rust-analyzer on wasm code instead

@@ -1389,6 +1389,7 @@ dependencies = [
  "document-features",
  "egui",
  "futures",
+ "getrandom",
  "js-sys",
  "rand",
  "reqwest",

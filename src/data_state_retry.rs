@@ -191,6 +191,7 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
         self.inner.is_none()
     }
 
+    #[cfg(feature = "egui")]
     fn ui_spinner_with_attempt_count(&self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
             ui.spinner();
