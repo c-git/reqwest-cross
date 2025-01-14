@@ -1390,6 +1390,7 @@ dependencies = [
  "egui",
  "futures",
  "js-sys",
+ "rand",
  "reqwest",
  "thiserror 2.0.9",
  "tokio",

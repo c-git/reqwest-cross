@@ -21,6 +21,7 @@ anyhow = "1.0.95"
 document-features = "0.2.10"
 egui = { version = "0.30.0", default-features = false, optional = true }
 futures = "0.3.28"
+rand = "0.8.5"
 reqwest = { version = "0.12.12", default-features = false }
 thiserror = "2.0.9"
 tracing = "0.1.41"
