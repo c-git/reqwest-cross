@@ -2,7 +2,6 @@
 #![deny(missing_debug_implementations)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![forbid(unsafe_code)]
-#![cfg_attr(test, deny(warnings))]
 // dox - used as documentation for duplicate wasm functions (Uncertain if this will cause problems
 // but seen this in Reqwest)
 
@@ -18,7 +17,9 @@
 //! [examples][#examples]. I would say if you're writing a larger application
 //! then [DataState] can abstract away a lot of the boiler plate. In addition I
 //! would prefer [fetch_plus]  over [fetch] unless you don't need the UI
-//! callback and [fetch_plus] ends up as the one with more boiler plate.
+//! callback and [fetch_plus] ends up as the one with more boiler plate. If
+//! automated retires are desired see [DataStateRetry] which exposes similar
+//! methods but with retry built in.
 //!
 //! NOTE: At least 1 [feature flag](#feature-flags) for
 //! native MUST be set to choose which runtime to use. Currently only Tokio is
@@ -72,12 +73,14 @@
 //! [examples_folder]: https://github.com/c-git/reqwest-cross/tree/main/examples
 
 mod data_state;
+mod data_state_retry;
 mod platform;
 mod traits;
 #[cfg(feature = "yield_now")]
 mod yield_;
 
 pub use data_state::{Awaiting, DataState, DataStateError, ErrorBounds};
+pub use data_state_retry::DataStateRetry;
 pub use platform::{fetch, fetch_plus, spawn};
 pub use traits::{BoundedFuture, DoneHandler, ResponseHandler, UiCallBack, ValidReturn};
 #[cfg(feature = "yield_now")]
