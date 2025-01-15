@@ -103,6 +103,15 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
                         self.inner = DataState::default();
                     }
                 } else {
+                    let wait_left = wait_before_next_attempt(self.next_allowed_attempt);
+                    ui.colored_label(
+                        ui.visuals().error_fg_color,
+                        format!(
+                            "{} attempt(s) left. {} seconds before retry. {e}",
+                            self.attempts_left,
+                            wait_left.as_secs()
+                        ),
+                    );
                     let is_able_to_make_progress = self.get(fetch_fn).is_able_to_make_progress();
                     assert!(
                         is_able_to_make_progress,
@@ -163,10 +172,8 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
                 if self.attempts_left == 0 {
                     self.inner.get(fetch_fn)
                 } else {
-                    let wait_duration_left = self
-                        .next_allowed_attempt
-                        .saturating_duration_since(Instant::now());
-                    if wait_duration_left.is_zero() {
+                    let wait_left = wait_before_next_attempt(self.next_allowed_attempt);
+                    if wait_left.is_zero() {
                         warn!(?err_msg, ?self.attempts_left, "retrying request");
                         self.attempts_left -= 1;
                         self.inner = DataState::None;
@@ -232,4 +239,9 @@ impl<T, E: ErrorBounds> AsMut<DataStateRetry<T, E>> for DataStateRetry<T, E> {
     fn as_mut(&mut self) -> &mut DataStateRetry<T, E> {
         self
     }
+}
+
+/// The duration before the next attempt will be made
+fn wait_before_next_attempt(next_allowed_attempt: Instant) -> Duration {
+    next_allowed_attempt.saturating_duration_since(Instant::now())
 }
