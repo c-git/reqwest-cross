@@ -55,6 +55,37 @@ pub enum DataState<T, E: ErrorBounds = anyhow::Error> {
 
 impl<T, E: ErrorBounds> DataState<T, E> {
     #[cfg(feature = "egui")]
+    /// Calls [Self::start_request] and adds a spinner if progress can be made
+    #[must_use]
+    pub fn egui_start_request<F>(&mut self, ui: &mut egui::Ui, fetch_fn: F) -> CanMakeProgress
+    where
+        F: FnOnce() -> Awaiting<T, E>,
+    {
+        let result = self.start_request(fetch_fn);
+        if result.is_able_to_make_progress() {
+            ui.spinner();
+        }
+        result
+    }
+
+    /// Starts a new request. Only intended to be on [Self::None] and if state
+    /// is any other value it returns
+    /// [CanMakeProgress::UnableToMakeProgress]
+    #[must_use]
+    pub fn start_request<F>(&mut self, fetch_fn: F) -> CanMakeProgress
+    where
+        F: FnOnce() -> Awaiting<T, E>,
+    {
+        if self.is_none() {
+            let result = self.get(fetch_fn);
+            assert!(result.is_able_to_make_progress());
+            result
+        } else {
+            CanMakeProgress::UnableToMakeProgress
+        }
+    }
+
+    #[cfg(feature = "egui")]
     /// Attempts to load the data and displays appropriate UI if applicable.
     /// Some branches lead to no UI being displayed, in particular when the data
     /// or an error is received (On the expectation it will show next frame).
