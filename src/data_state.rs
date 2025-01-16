@@ -37,6 +37,11 @@ pub enum CanMakeProgress {
 /// Used to represent data that is pending being available
 #[derive(Debug)]
 pub struct Awaiting<T, E: ErrorBounds>(pub oneshot::Receiver<Result<T, E>>);
+impl<T, E: ErrorBounds> From<oneshot::Receiver<Result<T, E>>> for Awaiting<T, E> {
+    fn from(value: oneshot::Receiver<Result<T, E>>) -> Self {
+        Self(value)
+    }
+}
 
 /// Used to store a type that is not always available and we need to keep
 /// polling it to get it ready
@@ -57,9 +62,10 @@ impl<T, E: ErrorBounds> DataState<T, E> {
     #[cfg(feature = "egui")]
     /// Calls [Self::start_request] and adds a spinner if progress can be made
     #[must_use]
-    pub fn egui_start_request<F>(&mut self, ui: &mut egui::Ui, fetch_fn: F) -> CanMakeProgress
+    pub fn egui_start_request<F, R>(&mut self, ui: &mut egui::Ui, fetch_fn: F) -> CanMakeProgress
     where
-        F: FnOnce() -> Awaiting<T, E>,
+        F: FnOnce() -> R,
+        R: Into<Awaiting<T, E>>,
     {
         let result = self.start_request(fetch_fn);
         if result.is_able_to_make_progress() {
@@ -69,97 +75,77 @@ impl<T, E: ErrorBounds> DataState<T, E> {
     }
 
     /// Starts a new request. Only intended to be on [Self::None] and if state
-    /// is any other value it returns
-    /// [CanMakeProgress::UnableToMakeProgress]
+    /// is any other value it returns [CanMakeProgress::UnableToMakeProgress]
     #[must_use]
-    pub fn start_request<F>(&mut self, fetch_fn: F) -> CanMakeProgress
+    pub fn start_request<F, R>(&mut self, fetch_fn: F) -> CanMakeProgress
     where
-        F: FnOnce() -> Awaiting<T, E>,
+        F: FnOnce() -> R,
+        R: Into<Awaiting<T, E>>,
     {
         if self.is_none() {
-            let result = self.get(fetch_fn);
-            assert!(result.is_able_to_make_progress());
-            result
+            *self = DataState::AwaitingResponse(fetch_fn().into());
+            CanMakeProgress::AbleToMakeProgress
         } else {
+            debug_assert!(
+                false,
+                "No known good reason this path should be hit other than logic error"
+            );
             CanMakeProgress::UnableToMakeProgress
         }
     }
 
+    /// Convenience method that will try to make progress if in
+    /// [Self::AwaitingResponse] and does nothing otherwise. Returns a reference
+    /// to self for chaining
+    pub fn poll(&mut self) -> &mut Self {
+        if let DataState::AwaitingResponse(rx) = self {
+            if let Some(new_state) = Self::await_data(rx) {
+                *self = new_state;
+            }
+        }
+        self
+    }
+
     #[cfg(feature = "egui")]
-    /// Attempts to load the data and displays appropriate UI if applicable.
-    /// Some branches lead to no UI being displayed, in particular when the data
-    /// or an error is received (On the expectation it will show next frame).
-    /// When in an error state the error messages will show as applicable.
-    /// If called an already has data present this function does nothing and
-    /// returns [CanMakeProgress::UnableToMakeProgress]
+    /// Meant to be a simple method to just provide the data if it's ready or
+    /// help with UI and polling to get it ready if it's not.
     ///
-    /// If a `retry_msg` is provided then it overrides the default
+    /// WARNING: Does nothing if `self` is [Self::None]
     ///
-    /// Note see [`Self::get`] for more info.
+    /// If a `error_btn_text` is provided then it overrides the default
     #[must_use]
-    pub fn egui_get<F>(
+    pub fn egui_poll_mut(
         &mut self,
         ui: &mut egui::Ui,
-        retry_msg: Option<&str>,
-        fetch_fn: F,
-    ) -> CanMakeProgress
-    where
-        F: FnOnce() -> Awaiting<T, E>,
-    {
+        error_btn_text: Option<&str>,
+    ) -> Option<&mut T> {
         match self {
-            DataState::None => {
-                ui.spinner();
-                self.get(fetch_fn)
-            }
+            DataState::None => {}
             DataState::AwaitingResponse(_) => {
                 ui.spinner();
-                self.get(fetch_fn)
+                self.poll();
             }
-            DataState::Present(_data) => {
-                // Does nothing as data is already present
-                CanMakeProgress::UnableToMakeProgress
+            DataState::Present(data) => {
+                return Some(data);
             }
             DataState::Failed(e) => {
                 ui.colored_label(ui.visuals().error_fg_color, e.to_string());
-                if ui.button(retry_msg.unwrap_or("Retry Request")).clicked() {
+                if ui
+                    .button(error_btn_text.unwrap_or("Clear Error Status"))
+                    .clicked()
+                {
                     *self = DataState::default();
                 }
-                CanMakeProgress::AbleToMakeProgress
             }
         }
+        None
     }
 
-    /// Attempts to load the data and returns if it is able to make progress.
-    ///
-    /// Note: F needs to return `AwaitingType<T>` and not T because it needs to
-    /// be able to be pending if T is not ready.
+    #[cfg(feature = "egui")]
+    /// Wraps [Self::egui_poll_mut] and returns an immutable reference
     #[must_use]
-    pub fn get<F>(&mut self, fetch_fn: F) -> CanMakeProgress
-    where
-        F: FnOnce() -> Awaiting<T, E>,
-    {
-        match self {
-            DataState::None => {
-                let rx = fetch_fn();
-                *self = DataState::AwaitingResponse(rx);
-                CanMakeProgress::AbleToMakeProgress
-            }
-            DataState::AwaitingResponse(rx) => {
-                if let Some(new_state) = Self::await_data(rx) {
-                    *self = new_state;
-                }
-                CanMakeProgress::AbleToMakeProgress
-            }
-            DataState::Present(_data) => {
-                // Does nothing data is already present
-                CanMakeProgress::UnableToMakeProgress
-            }
-            DataState::Failed(_e) => {
-                // Have no way to let the user know there is an error nothing we
-                // can do here
-                CanMakeProgress::UnableToMakeProgress
-            }
-        }
+    pub fn egui_poll(&mut self, ui: &mut egui::Ui, error_btn_text: Option<&str>) -> Option<&T> {
+        self.egui_poll_mut(ui, error_btn_text).map(|x| &*x)
     }
 
     /// Checks to see if the data is ready and if it is returns a new [`Self`]
@@ -183,6 +169,31 @@ impl<T, E: ErrorBounds> DataState<T, E> {
                 DataState::Failed(DataStateError::SenderDropped(e))
             }
         })
+    }
+
+    /// Returns a reference to the inner data if available otherwise None.
+    ///
+    /// NOTE: This function does not poll to get the data ready if the state is
+    /// still awaiting
+    pub fn present(&self) -> Option<&T> {
+        if let Self::Present(data) = self {
+            Some(data)
+        } else {
+            None
+        }
+    }
+
+    /// Returns a mutable reference to the inner data if available otherwise
+    /// None
+    ///
+    /// NOTE: This function does not poll to get the data ready if the state is
+    /// still awaiting
+    pub fn present_mut(&mut self) -> Option<&mut T> {
+        if let Self::Present(data) = self {
+            Some(data)
+        } else {
+            None
+        }
     }
 
     /// Returns `true` if the data state is [`Present`].
