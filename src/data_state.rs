@@ -61,7 +61,6 @@ pub enum DataState<T, E: ErrorBounds = anyhow::Error> {
 impl<T, E: ErrorBounds> DataState<T, E> {
     #[cfg(feature = "egui")]
     /// Calls [Self::start_request] and adds a spinner if progress can be made
-    #[must_use]
     pub fn egui_start_request<F, R>(&mut self, ui: &mut egui::Ui, fetch_fn: F) -> CanMakeProgress
     where
         F: FnOnce() -> R,
@@ -113,7 +112,6 @@ impl<T, E: ErrorBounds> DataState<T, E> {
     /// WARNING: Does nothing if `self` is [Self::None]
     ///
     /// If a `error_btn_text` is provided then it overrides the default
-    #[must_use]
     pub fn egui_poll_mut(
         &mut self,
         ui: &mut egui::Ui,
@@ -143,7 +141,6 @@ impl<T, E: ErrorBounds> DataState<T, E> {
 
     #[cfg(feature = "egui")]
     /// Wraps [Self::egui_poll_mut] and returns an immutable reference
-    #[must_use]
     pub fn egui_poll(&mut self, ui: &mut egui::Ui, error_btn_text: Option<&str>) -> Option<&T> {
         self.egui_poll_mut(ui, error_btn_text).map(|x| &*x)
     }
