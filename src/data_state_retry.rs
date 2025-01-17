@@ -1,4 +1,4 @@
-use tracing::{error, warn};
+use tracing::warn;
 
 use crate::{data_state::CanMakeProgress, Awaiting, DataState, ErrorBounds};
 use std::fmt::Debug;
@@ -10,9 +10,11 @@ use std::time::{Duration, Instant};
 pub struct DataStateRetry<T, E: ErrorBounds = anyhow::Error> {
     /// Number of attempts that the retries get reset to
     pub max_attempts: u8,
+
     /// The range of milliseconds to select a random value from to set the delay
     /// to retry
     pub retry_delay_millis: Range<u16>,
+
     attempts_left: u8,
     inner: DataState<T, E>, // Not public to ensure resets happen as they should
     next_allowed_attempt: Instant,
@@ -74,19 +76,20 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
     ///
     /// Note see [`DataState::egui_get`] for more info.
     #[must_use]
-    pub fn egui_get<F>(
+    pub fn egui_start_or_poll<F, R>(
         &mut self,
         ui: &mut egui::Ui,
         retry_msg: Option<&str>,
         fetch_fn: F,
     ) -> CanMakeProgress
     where
-        F: FnOnce() -> Awaiting<T, E>,
+        F: FnOnce() -> R,
+        R: Into<Awaiting<T, E>>,
     {
         match self.inner.as_ref() {
             DataState::None | DataState::AwaitingResponse(_) => {
                 self.ui_spinner_with_attempt_count(ui);
-                self.get(fetch_fn)
+                self.start_or_poll(fetch_fn)
             }
             DataState::Present(_data) => {
                 // Does nothing as data is already present
@@ -96,7 +99,7 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
                 if self.attempts_left == 0 {
                     ui.colored_label(
                         ui.visuals().error_fg_color,
-                        format!("{} attempts exhausted. {e}", self.max_attempts),
+                        format!("No attempts left from {}. {e}", self.max_attempts),
                     );
                     if ui.button(retry_msg.unwrap_or("Restart Requests")).clicked() {
                         self.reset_attempts();
@@ -112,30 +115,26 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
                             wait_left.as_secs()
                         ),
                     );
-                    let is_able_to_make_progress = self.get(fetch_fn).is_able_to_make_progress();
-                    assert!(
-                        is_able_to_make_progress,
-                        "if this is not true something is very wrong"
-                    );
+                    if ui.button("Stop Trying").clicked() {
+                        self.attempts_left = 0;
+                    }
                 }
-
                 CanMakeProgress::AbleToMakeProgress
             }
         }
     }
 
     /// Attempts to load the data and returns if it is able to make progress.
-    ///
-    /// See [`DataState::get`] for more info.
     #[must_use]
-    pub fn get<F>(&mut self, fetch_fn: F) -> CanMakeProgress
+    pub fn start_or_poll<F, R>(&mut self, fetch_fn: F) -> CanMakeProgress
     where
-        F: FnOnce() -> Awaiting<T, E>,
+        F: FnOnce() -> R,
+        R: Into<Awaiting<T, E>>,
     {
         match self.inner.as_mut() {
             DataState::None => {
                 // Going to make an attempt, set when the next attempt is allowed
-                use rand::Rng;
+                use rand::Rng as _;
                 let wait_time_in_millis = rand::thread_rng()
                     .gen_range(self.retry_delay_millis.clone())
                     .into();
@@ -143,34 +142,19 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
                     .checked_add(Duration::from_millis(wait_time_in_millis))
                     .expect("failed to get random delay, value was out of range");
 
-                self.inner.get(fetch_fn)
+                self.inner.start_request(fetch_fn)
             }
-            DataState::AwaitingResponse(rx) => {
-                if let Some(new_state) = DataState::await_data(rx) {
-                    // TODO 4: Add some tests to ensure await_data work as this function assumes
-                    self.inner = match new_state.as_ref() {
-                        DataState::None => {
-                            error!("Unexpected new state received of DataState::None");
-                            unreachable!("Only expect Failed or Present variants to be returned but got None")
-                        }
-                        DataState::AwaitingResponse(_) => {
-                            error!("Unexpected new state received of AwaitingResponse");
-                            unreachable!("Only expect Failed or Present variants to be returned bug got AwaitingResponse")
-                        }
-                        DataState::Present(_) => {
-                            // Data was successfully received
-                            self.reset_attempts();
-                            new_state
-                        }
-                        DataState::Failed(_) => new_state,
-                    };
+            DataState::AwaitingResponse(_) => {
+                if self.inner.poll().is_present() {
+                    // Data was successfully received because before it was Awaiting
+                    self.reset_attempts();
                 }
                 CanMakeProgress::AbleToMakeProgress
             }
-            DataState::Present(_) => self.inner.get(fetch_fn),
+            DataState::Present(_) => CanMakeProgress::UnableToMakeProgress,
             DataState::Failed(err_msg) => {
                 if self.attempts_left == 0 {
-                    self.inner.get(fetch_fn)
+                    CanMakeProgress::UnableToMakeProgress
                 } else {
                     let wait_left = wait_before_next_attempt(self.next_allowed_attempt);
                     if wait_left.is_zero() {
@@ -193,6 +177,7 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
     /// Clear stored data
     pub fn clear(&mut self) {
         self.inner = DataState::default();
+        self.reset_attempts();
     }
 
     /// Returns `true` if the internal data state is [`DataState::Present`].
@@ -245,3 +230,5 @@ impl<T, E: ErrorBounds> AsMut<DataStateRetry<T, E>> for DataStateRetry<T, E> {
 fn wait_before_next_attempt(next_allowed_attempt: Instant) -> Duration {
     next_allowed_attempt.saturating_duration_since(Instant::now())
 }
+
+// TODO 4: Use mocking to add tests ensuring retires are executed
