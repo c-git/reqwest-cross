@@ -3,7 +3,6 @@ use tracing::warn;
 use crate::{data_state::CanMakeProgress, Awaiting, DataState, ErrorBounds};
 use std::fmt::Debug;
 use std::ops::Range;
-use std::time::{Duration, Instant};
 
 /// Automatically retries with a delay on failure until attempts are exhausted
 #[derive(Debug)]
@@ -17,7 +16,7 @@ pub struct DataStateRetry<T, E: ErrorBounds = anyhow::Error> {
 
     attempts_left: u8,
     inner: DataState<T, E>, // Not public to ensure resets happen as they should
-    next_allowed_attempt: Instant,
+    next_allowed_attempt: u128,
 }
 
 impl<T, E: ErrorBounds> DataStateRetry<T, E> {
@@ -35,9 +34,8 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
         self.attempts_left
     }
 
-    /// The instant that needs to be waited for before another attempt is
-    /// allowed
-    pub fn next_allowed_attempt(&self) -> Instant {
+    /// The number of millis after the epoch that an attempt is allowed
+    pub fn next_allowed_attempt(&self) -> u128 {
         self.next_allowed_attempt
     }
 
@@ -112,17 +110,17 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
                         format!(
                             "{} attempt(s) left. {} seconds before retry. {e}",
                             self.attempts_left,
-                            wait_left.as_secs()
+                            wait_left / 1000
                         ),
                     );
-                    if ui.button("Stop Trying").clicked() {
-                        self.attempts_left = 0;
-                    }
                     let can_make_progress = self.start_or_poll(fetch_fn);
                     debug_assert!(
                         can_make_progress.is_able_to_make_progress(),
                         "This should be able to make progress"
                     );
+                    if ui.button("Stop Trying").clicked() {
+                        self.attempts_left = 0;
+                    }
                 }
                 CanMakeProgress::AbleToMakeProgress
             }
@@ -140,12 +138,9 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
             DataState::None => {
                 // Going to make an attempt, set when the next attempt is allowed
                 use rand::Rng as _;
-                let wait_time_in_millis = rand::thread_rng()
-                    .gen_range(self.retry_delay_millis.clone())
-                    .into();
-                self.next_allowed_attempt = Instant::now()
-                    .checked_add(Duration::from_millis(wait_time_in_millis))
-                    .expect("failed to get random delay, value was out of range");
+                let wait_time_in_millis =
+                    rand::thread_rng().gen_range(self.retry_delay_millis.clone());
+                self.next_allowed_attempt = millis_since_epoch() + wait_time_in_millis as u128;
 
                 self.inner.start_request(fetch_fn)
             }
@@ -162,7 +157,7 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
                     CanMakeProgress::UnableToMakeProgress
                 } else {
                     let wait_left = wait_before_next_attempt(self.next_allowed_attempt);
-                    if wait_left.is_zero() {
+                    if wait_left == 0 {
                         warn!(?err_msg, ?self.attempts_left, "retrying request");
                         self.attempts_left -= 1;
                         self.inner = DataState::None;
@@ -176,7 +171,7 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
     /// Resets the attempts taken
     pub fn reset_attempts(&mut self) {
         self.attempts_left = self.max_attempts;
-        self.next_allowed_attempt = Instant::now();
+        self.next_allowed_attempt = millis_since_epoch();
     }
 
     /// Clear stored data
@@ -214,7 +209,7 @@ impl<T, E: ErrorBounds> Default for DataStateRetry<T, E> {
             max_attempts: 3,
             retry_delay_millis: 1000..5000,
             attempts_left: 3,
-            next_allowed_attempt: Instant::now(),
+            next_allowed_attempt: millis_since_epoch(),
         }
     }
 }
@@ -232,8 +227,15 @@ impl<T, E: ErrorBounds> AsMut<DataStateRetry<T, E>> for DataStateRetry<T, E> {
 }
 
 /// The duration before the next attempt will be made
-fn wait_before_next_attempt(next_allowed_attempt: Instant) -> Duration {
-    next_allowed_attempt.saturating_duration_since(Instant::now())
+fn wait_before_next_attempt(next_allowed_attempt: u128) -> u128 {
+    next_allowed_attempt.saturating_sub(millis_since_epoch())
+}
+
+fn millis_since_epoch() -> u128 {
+    web_time::SystemTime::UNIX_EPOCH
+        .elapsed()
+        .expect("expected date on system to be after the epoch")
+        .as_millis()
 }
 
 // TODO 4: Use mocking to add tests ensuring retires are executed

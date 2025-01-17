@@ -1383,7 +1383,7 @@ dependencies = [
 
 [[package]]
 name = "reqwest-cross"
-version = "0.6.1"
+version = "0.6.2"
 dependencies = [
  "anyhow",
  "document-features",
@@ -1399,6 +1399,7 @@ dependencies = [
  "wasm-bindgen-futures",
  "wasm-bindgen-test",
  "web-sys",
+ "web-time",
 ]
 
 [[package]]
