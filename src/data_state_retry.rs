@@ -113,14 +113,14 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
                             wait_left / 1000
                         ),
                     );
-                    if ui.button("Stop Trying").clicked() {
-                        self.attempts_left = 0;
-                    }
                     let can_make_progress = self.start_or_poll(fetch_fn);
                     debug_assert!(
                         can_make_progress.is_able_to_make_progress(),
                         "This should be able to make progress"
                     );
+                    if ui.button("Stop Trying").clicked() {
+                        self.attempts_left = 0;
+                    }
                 }
                 CanMakeProgress::AbleToMakeProgress
             }
