@@ -1,14 +1,11 @@
 [jobs.check]
 command = ["cargo", "check", "--features=yield_now,egui"]
-need_stdout = true
 
 [jobs.clippy]
 command = ["cargo", "clippy", "--features=yield_now,egui"]
-need_stdout = true
 
 [jobs.test_examples]
 command = ["cargo", "test", "--features=yield_now,egui", "--examples"]
-need_stdout = true
 
 [keybindings]
 e = "job:test_examples"
