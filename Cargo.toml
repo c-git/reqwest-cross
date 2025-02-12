@@ -42,10 +42,7 @@ getrandom = { version = "0.2.15", features = ["js"] }
 wasm-bindgen-test = "0.3.34"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-tokio = { version = "1.27.0", default-features = false, features = [
-    "macros",
-    "rt-multi-thread",
-] }
+tokio = { version = "1.27.0", default-features = false, features = ["macros", "rt-multi-thread"] }
 
 [[example]]
 name = "loop_yield_custom"
