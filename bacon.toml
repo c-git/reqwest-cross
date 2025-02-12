@@ -7,5 +7,9 @@ command = ["cargo", "clippy", "--features=yield_now,egui"]
 [jobs.test_examples]
 command = ["cargo", "test", "--features=yield_now,egui", "--examples"]
 
+[jobs.wasm]
+command = ["cargo", "check", "--target", "wasm32-unknown-unknown"]
+env.RUSTFLAGS = '--cfg getrandom_backend="wasm_js"'
+
 [keybindings]
 e = "job:test_examples"
