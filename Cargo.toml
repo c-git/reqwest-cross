@@ -82,6 +82,8 @@ egui = ["dep:egui"]
 ## Enables the feature with the same name on reqwest
 brotli = ["reqwest/brotli"]
 ## Enables the feature with the same name on reqwest
+charset = ["reqwest/charset"]
+## Enables the feature with the same name on reqwest
 cookies = ["reqwest/cookies"]
 ## Enables the feature with the same name on reqwest
 default-tls = ["reqwest/default-tls"]
@@ -94,13 +96,35 @@ hickory-dns = ["reqwest/hickory-dns"]
 ## Enables the feature with the same name on reqwest
 http2 = ["reqwest/http2"]
 ## Enables the feature with the same name on reqwest
+http3 = ["reqwest/http3"]
+## Enables the feature with the same name on reqwest
 json = ["reqwest/json"]
+## Enables the feature with the same name on reqwest
+macos-system-configuration = ["reqwest/macos-system-configuration"]
 ## Enables the feature with the same name on reqwest
 multipart = ["reqwest/multipart"]
 ## Enables the feature with the same name on reqwest
 native-tls = ["reqwest/native-tls"]
 ## Enables the feature with the same name on reqwest
+native-tls-alpn = ["reqwest/native-tls-alpn"]
+## Enables the feature with the same name on reqwest
+native-tls-vendored = ["reqwest/native-tls-vendored"]
+## Enables the feature with the same name on reqwest
 rustls-tls = ["reqwest/rustls-tls"]
+## Enables the feature with the same name on reqwest
+rustls-tls-manual-roots = ["reqwest/rustls-tls-manual-roots"]
+## Enables the feature with the same name on reqwest
+rustls-tls-manual-roots-no-provider = ["reqwest/rustls-tls-manual-roots-no-provider"]
+## Enables the feature with the same name on reqwest
+rustls-tls-native-roots = ["reqwest/rustls-tls-native-roots"]
+## Enables the feature with the same name on reqwest
+rustls-tls-native-roots-no-provider = ["reqwest/rustls-tls-native-roots-no-provider"]
+## Enables the feature with the same name on reqwest
+rustls-tls-no-provider = ["reqwest/rustls-tls-no-provider"]
+## Enables the feature with the same name on reqwest
+rustls-tls-webpki-roots = ["reqwest/rustls-tls-webpki-roots"]
+## Enables the feature with the same name on reqwest
+rustls-tls-webpki-roots-no-provider = ["reqwest/rustls-tls-webpki-roots-no-provider"]
 ## Enables the feature with the same name on reqwest
 socks = ["reqwest/socks"]
 ## Enables the feature with the same name on reqwest
