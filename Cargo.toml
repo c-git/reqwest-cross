@@ -96,8 +96,6 @@ hickory-dns = ["reqwest/hickory-dns"]
 ## Enables the feature with the same name on reqwest
 http2 = ["reqwest/http2"]
 ## Enables the feature with the same name on reqwest
-http3 = ["reqwest/http3"]
-## Enables the feature with the same name on reqwest
 json = ["reqwest/json"]
 ## Enables the feature with the same name on reqwest
 macos-system-configuration = ["reqwest/macos-system-configuration"]
