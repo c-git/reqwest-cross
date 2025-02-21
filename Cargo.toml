@@ -80,30 +80,30 @@ egui = ["dep:egui"]
 #! Because features are additive it will be enabled but note that if the version goes out of sync it will cause compilation issues.
 
 ## Enables the feature with the same name on reqwest
+brotli = ["reqwest/brotli"]
+## Enables the feature with the same name on reqwest
+cookies = ["reqwest/cookies"]
+## Enables the feature with the same name on reqwest
 default-tls = ["reqwest/default-tls"]
 ## Enables the feature with the same name on reqwest
-native-tls = ["reqwest/native-tls"]
+deflate = ["reqwest/deflate"]
 ## Enables the feature with the same name on reqwest
-rustls-tls = ["reqwest/rustls-tls"]
+gzip = ["reqwest/gzip"]
+## Enables the feature with the same name on reqwest
+hickory-dns = ["reqwest/hickory-dns"]
 ## Enables the feature with the same name on reqwest
 http2 = ["reqwest/http2"]
 ## Enables the feature with the same name on reqwest
 json = ["reqwest/json"]
 ## Enables the feature with the same name on reqwest
-cookies = ["reqwest/cookies"]
-## Enables the feature with the same name on reqwest
-hickory-dns = ["reqwest/hickory-dns"]
-## Enables the feature with the same name on reqwest
 multipart = ["reqwest/multipart"]
+## Enables the feature with the same name on reqwest
+native-tls = ["reqwest/native-tls"]
+## Enables the feature with the same name on reqwest
+rustls-tls = ["reqwest/rustls-tls"]
 ## Enables the feature with the same name on reqwest
 socks = ["reqwest/socks"]
 ## Enables the feature with the same name on reqwest
 stream = ["reqwest/stream"]
-## Enables the feature with the same name on reqwest
-brotli = ["reqwest/brotli"]
-## Enables the feature with the same name on reqwest
-deflate = ["reqwest/deflate"]
-## Enables the feature with the same name on reqwest
-gzip = ["reqwest/gzip"]
 ## Enables the feature with the same name on reqwest
 zstd = ["reqwest/zstd"]
