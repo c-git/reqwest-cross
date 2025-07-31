@@ -19,23 +19,23 @@ all-features = true
 [dependencies]
 anyhow = "1.0.98"
 document-features = "0.2.11"
-egui = { version = "0.31.0", default-features = false, optional = true } # The minimal part of their API we use has been stable
-futures = "0.3.28"
-rand = "0.9.1"
-reqwest = { version = "0.12.15", default-features = false }
+egui = { version = "0.32.0", default-features = false, optional = true } # The minimal part of their API we use has been stable
+futures = "0.3.31"
+rand = "0.9.2"
+reqwest = { version = "0.12.22", default-features = false }
 thiserror = "2.0.12"
 tracing = "0.1.41"
 web-time = "1.1.0"
 
 # For native compilation
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-tokio = { version = "1.44.2", default-features = false, optional = true }
+tokio = { version = "1.47.0", default-features = false, optional = true }
 
 # For compiling to wasm:
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-getrandom = { version = "0.3.2", features = ["wasm_js"] }
-js-sys = { version = "0.3.69", optional = true }
-wasm-bindgen-futures = "0.4.34"
+getrandom = { version = "0.3.3", features = ["wasm_js"] }
+js-sys = { version = "0.3.77", optional = true }
+wasm-bindgen-futures = "0.4.50"
 web-sys = { version = "0.3.69", optional = true }
 
 [dev-dependencies]
