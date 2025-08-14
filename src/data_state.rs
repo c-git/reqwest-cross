@@ -33,7 +33,8 @@ pub enum CanMakeProgress {
     /// Used to indicate that it is still possible for progress to be made
     AbleToMakeProgress,
 
-    /// Used to indicate that further calls are not useful as no progress can be made in current state
+    /// Used to indicate that further calls are not useful as no progress can be
+    /// made in current state
     UnableToMakeProgress,
 }
 
