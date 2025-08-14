@@ -30,7 +30,10 @@ pub enum DataStateError<E: ErrorBounds> {
 /// Provides a way to ensure the calling code knows if it is calling a function
 /// that cannot do anything useful anymore
 pub enum CanMakeProgress {
+    /// Used to indicate that it is still possible for progress to be made
     AbleToMakeProgress,
+
+    /// Used to indicate that further calls are not useful as no progress can be made in current state
     UnableToMakeProgress,
 }
 
