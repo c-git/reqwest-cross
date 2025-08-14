@@ -79,7 +79,7 @@ mod traits;
 #[cfg(feature = "yield_now")]
 mod yield_;
 
-pub use data_state::{Awaiting, DataState, DataStateError, ErrorBounds};
+pub use data_state::{Awaiting, CanMakeProgress, DataState, DataStateError, ErrorBounds};
 pub use data_state_retry::DataStateRetry;
 pub use platform::{fetch, fetch_plus, spawn};
 pub use traits::{BoundedFuture, DoneHandler, ResponseHandler, UiCallBack, ValidReturn};

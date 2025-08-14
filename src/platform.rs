@@ -17,7 +17,7 @@ pub use wasm::*;
 /// Wraps the call to [fetch] with the surrounding boilerplate.
 ///
 /// # Example
-/// ```rust
+/// ```rust,ignore-wasm32
 /// # use reqwest_cross::fetch_plus;
 /// #
 /// # #[tokio::main(flavor = "current_thread")]
