@@ -33,6 +33,7 @@ tokio = { version = "1.47.1", default-features = false, optional = true }
 
 # For compiling to wasm:
 [target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom_old = { package = 'getrandom', version = "0.3.3", features = ["wasm_js"] } # Still pulled in via reqwest
 getrandom = { version = "0.4", features = ["wasm_js"] }
 js-sys = { version = "0.3.77", optional = true }
 wasm-bindgen-futures = "0.4.50"
