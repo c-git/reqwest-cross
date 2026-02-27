@@ -137,7 +137,7 @@ impl<T, E: ErrorBounds> DataStateRetry<T, E> {
         match self.inner.as_mut() {
             DataState::None => {
                 // Going to make an attempt, set when the next attempt is allowed
-                use rand::Rng as _;
+                use rand::RngExt as _;
                 let wait_time_in_millis = rand::rng().random_range(self.retry_delay_millis.clone());
                 self.next_allowed_attempt = millis_since_epoch() + wait_time_in_millis as u128;
 
