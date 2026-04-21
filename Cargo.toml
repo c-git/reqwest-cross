@@ -1,6 +1,6 @@
 [package]
 name = "reqwest-cross"
-version = "0.9.0"
+version = "0.10.0"
 authors = ["One <one.bgz1@gmail.com>"]
 categories = ["web-programming::http-client", "wasm"]
 documentation = "https://docs.rs/reqwest-cross"
@@ -19,9 +19,9 @@ all-features = true
 [dependencies]
 anyhow = "1.0.99"
 document-features = "0.2.11"
-egui = { version = "0.33", default-features = false, optional = true } # The minimal part of their API we use has been stable
+egui = { version = "0.34", default-features = false, optional = true } # The minimal part of their API we use has been stable
 futures = "0.3.31"
-rand = "0.9.2"
+rand = "0.10.0"
 reqwest = { version = "0.13", default-features = false }
 thiserror = "2.0.14"
 tracing = "0.1.41"
@@ -33,7 +33,6 @@ tokio = { version = "1.47.1", default-features = false, optional = true }
 
 # For compiling to wasm:
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-getrandom_old = { package = 'getrandom', version = "0.3.3", features = ["wasm_js"] } # Still pulled in via reqwest
 getrandom = { version = "0.4", features = ["wasm_js"] }
 js-sys = { version = "0.3.77", optional = true }
 wasm-bindgen-futures = "0.4.50"
