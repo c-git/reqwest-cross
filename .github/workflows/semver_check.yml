@@ -5,15 +5,14 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  pull_request: 
+  pull_request:
     branches:
       - main
   workflow_call:
-    
+
 env:
   CARGO_TERM_COLOR: always
 
-  
 jobs:
   semver-checks:
     runs-on: ubuntu-latest

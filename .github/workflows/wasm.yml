@@ -8,11 +8,11 @@ on:
   push:
     branches:
       - develop
-  pull_request: 
+  pull_request:
     branches:
       - develop
   workflow_call:
-      
+
 env:
   CARGO_TERM_COLOR: always
 
@@ -41,7 +41,7 @@ jobs:
           components: clippy
       - name: Linting
         run: cargo clippy --target="wasm32-unknown-unknown" -- -D warnings
-    
+
   trunk_build:
     name: trunk build
     runs-on: ubuntu-latest
