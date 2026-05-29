@@ -22,7 +22,15 @@ def main [] {
 
     # Ensure not a dev version
     if "dev" in $tag_name {
-        print ($"Error: Current version is a development version. NOT tagged: ($tag_name)")
+        print $"Error: Current version is a development version. NOT tagged: ($tag_name)"
+        exit 1
+    }
+    
+    # Ensure we are on the main branch
+    let current_branch = (git branch --show-current | str trim)
+
+    if $current_branch != "main" {
+        print $"Error: You are on branch '($current_branch)', not 'main'."
         exit 1
     }
     
