@@ -1,14 +1,14 @@
 [package]
 version = "0.1.0"
-description = ""
-keywords = []
-repository = ""
-documentation = ""                    # Point to https://docs.rs/CRATE-NAME
-categories = []
 authors = ["One <one.bgz1@gmail.com>"]
-readme = "README.md"
-license = "MIT OR Apache-2.0"
+categories = []
+documentation = "" # Point to https://docs.rs/CRATE-NAME
 edition = "2024"
+keywords = []
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = ""
+description = ""
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
