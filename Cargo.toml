@@ -6,6 +6,7 @@ documentation = "" # Point to https://docs.rs/CRATE-NAME
 edition = "2024"
 keywords = []
 license = "MIT OR Apache-2.0"
+publish = false
 readme = "README.md"
 repository = ""
 description = ""
