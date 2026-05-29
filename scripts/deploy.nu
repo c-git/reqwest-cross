@@ -35,7 +35,7 @@ def main [] {
     }
     
     # Ensure cargo-semver-checks passes
-    cargo semver-check
+    cargo semver-checks
 
     git push
     git tag $tag_name
