@@ -80,6 +80,3 @@ pub use traits::{BoundedFuture, DoneHandler, ResponseHandler, UiCallBack, ValidR
 // Exported to ensure version used matches
 pub use futures::channel::oneshot;
 pub use reqwest;
-
-// TODO 4: Add browser test to ensure we don't break WASM by accident. Even if
-//          it can compile it might not be browser safe
