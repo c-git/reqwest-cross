@@ -1,15 +1,19 @@
-[jobs.check]
-command = ["cargo", "check", "--features=yield_now,egui"]
+[jobs.all-features-check-all]
+command = ["cargo", "check", "--all-targets", "--features=yield_now,egui"]
 
-[jobs.clippy]
-command = ["cargo", "clippy", "--features=yield_now,egui"]
+[jobs.all-features-clippy-all]
+command = ["cargo", "clippy", "--all-targets", "--features=yield_now,egui"]
 
-[jobs.test_examples]
+[jobs.test-examples]
 command = ["cargo", "test", "--features=yield_now,egui", "--examples"]
 
 [jobs.wasm]
 command = ["cargo", "check", "--target", "wasm32-unknown-unknown"]
-env.RUSTFLAGS = '--cfg getrandom_backend="wasm_js"'
+
+[jobs.egui-simple]
+command = ["cargo", "run", "--example", "egui_simple", "--features=egui"]
 
 [keybindings]
-e = "job:test_examples"
+e = "job:test-examples"
+c = "job:all-features-clippy-all"
+a = "job:all-features-check-all"
