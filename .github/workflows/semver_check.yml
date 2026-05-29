@@ -4,6 +4,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+  # TODO 4: Needs to be updated to run before deploy, this no longer works because we are moving the trunk based development with main as the trunk
 on:
   pull_request:
     branches:
