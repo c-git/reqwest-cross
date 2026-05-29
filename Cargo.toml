@@ -17,15 +17,11 @@ description = "Wrapper around reqwest for use in both native and wasm"
 all-features = true
 
 [dependencies]
-anyhow = "1.0.99"
 document-features = "0.2.11"
-egui = { version = "0.34", default-features = false, optional = true } # The minimal part of their API we use has been stable
 futures = "0.3.31"
-rand = "0.10.0"
+main-loop-async = { version = "0.1.0", default-features = false }
 reqwest = { version = "0.13", default-features = false }
-thiserror = "2.0.14"
 tracing = "0.1.41"
-web-time = "1.1.0"
 
 # For native compilation
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
@@ -33,12 +29,9 @@ tokio = { version = "1.47.1", default-features = false, optional = true }
 
 # For compiling to wasm:
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-getrandom = { version = "0.4", features = ["wasm_js"] }
-js-sys = { version = "0.3.77", optional = true }
-wasm-bindgen-futures = "0.4.50"
-web-sys = { version = "0.3.77", optional = true }
 
 [dev-dependencies]
+anyhow = "1.0.102"
 wasm-bindgen-test = "0.3.50"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
@@ -61,7 +54,7 @@ default = ["native-tokio", "reqwest_default"]
 reqwest_default = ["reqwest/default"]
 
 ## Sets [tokio][tokio-url] as the runtime to use for native
-native-tokio = ["dep:tokio"]
+native-tokio = ["dep:tokio", "main-loop-async/native-tokio"]
 
 ## Add a function that can be called to yield to the executor.
 ## This is only needed if you only have one thread and need to release it to prevent a deadlock
@@ -69,10 +62,10 @@ native-tokio = ["dep:tokio"]
 ## framework such as egui this may not be necessary as they already allow for other futures to
 ## make progress. But one test will quickly let you know either way. If the program freezes
 ## after you make a request then this can help.
-yield_now = ["dep:js-sys", "dep:web-sys"]
+yield_now = ["main-loop-async/yield_now"]
 
 ## Add helper functions to ['DataState'] to do egui boiler plate
-egui = ["dep:egui"]
+egui = ["main-loop-async/egui"]
 
 #! The following enable a subset of reqwest's features.
 #! If you need a feature that we didn't include please open an issue and let us know and we'll add it.

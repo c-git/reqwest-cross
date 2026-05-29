@@ -33,7 +33,7 @@ async fn common_code() -> Result<(), Box<dyn std::error::Error>> {
         if state.is_none() {
             let client = client.clone();
             let can_make_progress =
-                state.start_request(|| make_request(client, "https://httpbin.org/get"));
+                state.start_task(|| make_request(client, "https://httpbin.org/get"));
             assert!(can_make_progress.is_able_to_make_progress());
         }
         if let Some(status_code) = state.poll().present() {

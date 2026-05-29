@@ -61,10 +61,8 @@
 //! # How to run tokio on "secondary" thread
 //!
 //! If you want to use the main thread for your UI and need to run
-//! [tokio][tokio-url] on a "secondary" thread I found this
-//! [example](https://github.com/parasyte/egui-tokio-example) helpful. I found it in this
-//! [discussion](https://github.com/emilk/egui/discussions/521), which had other suggested
-//! examples as well.
+//! [tokio][tokio-url] on a "secondary" thread see
+//! [this example](https://github.com/c-git/main-loop-async/blob/main/examples/egui_simple.rs)
 //!
 //! [reqwest-url]: https://docs.rs/reqwest/latest/reqwest/
 //! [ehttp-url]: https://docs.rs/ehttp/0.2.0/ehttp/
@@ -72,19 +70,16 @@
 //! [reqwest_client]:https://docs.rs/reqwest/latest/reqwest/struct.Client.html
 //! [examples_folder]: https://github.com/c-git/reqwest-cross/tree/main/examples
 
-mod data_state;
-mod data_state_retry;
 mod platform;
 mod traits;
-#[cfg(feature = "yield_now")]
-mod yield_;
 
-pub use data_state::{Awaiting, CanMakeProgress, DataState, DataStateError, ErrorBounds};
-pub use data_state_retry::DataStateRetry;
-pub use platform::{fetch, fetch_plus, spawn};
-pub use traits::{BoundedFuture, DoneHandler, ResponseHandler, UiCallBack, ValidReturn};
 #[cfg(feature = "yield_now")]
-pub use yield_::yield_now;
+pub use main_loop_async::yield_now;
+pub use main_loop_async::{
+    self, Awaiting, CanMakeProgress, DataState, DataStateError, DataStateRetry, ErrorBounds,
+};
+pub use platform::{fetch, fetch_plus};
+pub use traits::{BoundedFuture, DoneHandler, ResponseHandler, UiCallBack, ValidReturn};
 
 // Exported to ensure version used matches
 pub use futures::channel::oneshot;
