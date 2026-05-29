@@ -6,13 +6,8 @@ concurrency:
 
 on:
   push:
-    branches:
-      - develop
-  pull_request: 
-    branches:
-      - develop
   workflow_call:
-      
+
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: --cfg getrandom_backend="wasm_js"
@@ -44,3 +39,16 @@ jobs:
           components: clippy
       - name: Linting
         run: cargo clippy --target="wasm32-unknown-unknown" -- -D warnings
+
+  trunk_build:
+    name: trunk build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wykies/checkout@main
+      - uses: wykies/setup-rust-toolchain@main
+        with:
+          target: wasm32-unknown-unknown
+      - name: Download and install Trunk binary
+        run: wget -qO- https://github.com/thedodd/trunk/releases/latest/download/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
+      - name: Build
+        run: ./trunk build

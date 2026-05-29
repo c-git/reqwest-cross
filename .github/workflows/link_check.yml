@@ -1,7 +1,7 @@
 name: Links Checker
 
 on:
-  pull_request: 
+  pull_request:
     branches:
       - main
   schedule:
@@ -15,10 +15,10 @@ jobs:
       - name: Restore lychee cache
         uses: actions/cache@v4
         with:
-            path: .lycheecache
-            key: cache-lychee-${{ github.ref }}
-            restore-keys: cache-lychee-
+          path: .lycheecache
+          key: cache-lychee-${{ github.ref }}
+          restore-keys: cache-lychee-
       - name: Run lychee
         uses: lycheeverse/lychee-action@v2
         with:
-            args: --cache --no-progress --require-https './**/*.md' './**/*.html' './**/*.rs'
+          args: --base $(pwd) --cache --no-progress --require-https './**/*.md' './**/*.html' './**/*.rs'
