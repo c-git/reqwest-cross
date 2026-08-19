@@ -1,10 +1,10 @@
 #!/usr/bin/env nu
 
-use std
+use std/log
 
 # Tags the most recent commit as a new release. Fails if the version has not been bumped because the tag will already exist
 def main [] {
-    std log info $"Running in: (pwd)"
+    log info $"Running in: (pwd)"
 
     # Ensure the working tree is clean
     if ((git status --porcelain | str trim) != "") {
@@ -23,8 +23,8 @@ def main [] {
     let version = ($cargo_toml_contents | get package.version)
     let crate_name = ($cargo_toml_contents | get package.name)
     let tag_name = $"($crate_name)_v($version)"
-    std log info $"Crate name: ($crate_name)"
-    std log info $"Tag name: ($tag_name)"
+    log info $"Crate name: ($crate_name)"
+    log info $"Tag name: ($tag_name)"
 
     # Ensure not a dev version
     if "dev" in $tag_name {
@@ -40,21 +40,21 @@ def main [] {
     }
 
     # Ensure cargo-semver-checks passes
-    std log info "Cheap checks completed moving on to do semver-checks"
+    log info "Cheap checks completed moving on to do semver-checks"
     cargo semver-checks
 
-    std log info "Executing deployment..."
+    log info "Executing deployment..."
 
-    std log info "Doing git push..."
+    log info "Doing git push..."
     git push
 
-    std log info "Creating Tag..."
+    log info "Creating Tag..."
     git tag $tag_name
     
-    std log info "Pushing Tag..."
+    log info "Pushing Tag..."
     git push --tags
     
-    std log info "Running cargo publish..."
+    log info "Running cargo publish..."
     cargo publish
     print $"Tag ($tag_name) created successfully and pushed"
 }
