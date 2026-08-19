@@ -3,7 +3,7 @@
 // DataState type.
 
 use anyhow::Context;
-use reqwest_cross::{fetch_plus, oneshot, reqwest, DataState};
+use reqwest_cross::{DataState, fetch_plus, oneshot, reqwest};
 
 #[cfg(all(not(target_arch = "wasm32"), feature = "native-tokio"))]
 #[tokio::main]
