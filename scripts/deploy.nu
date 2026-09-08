@@ -38,6 +38,9 @@ def main [] {
         print $"Error: You are on branch '($current_branch)', not 'main'."
         exit 1
     }
+    
+    # Verify no unknown advisories
+    cargo deny check advisories
 
     # Ensure cargo-semver-checks passes
     log info "Cheap checks completed moving on to do semver-checks"
