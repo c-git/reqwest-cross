@@ -6,7 +6,7 @@ concurrency:
 
 on:
   schedule:
-    - cron: "00 10 * * 3" # 06:00 GMT-4
+    - cron: "00 10 * * 1" # 06:00 GMT-4
   push:
     paths:
       - "**/Cargo.toml"
